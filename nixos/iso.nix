@@ -2,8 +2,8 @@
 
 {
   imports = [
-    # Include the NixOS module for generating ISO images
-    "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
+    # Use graphical installation media instead of minimal
+    "${modulesPath}/installer/cd-dvd/installation-cd-graphical-kde.nix"
     
     # Include our SSH module
     ./modules/ssh.nix
