@@ -52,16 +52,13 @@
   # Set hostname for the ISO
   networking.hostName = "cirrus-iso";
   
-  # Enable WiFi Support
-  networking.wireless = {
-    enable = true;  # Enable wpa_supplicant for minimal ISO
-    userControlled.enable = true;
-  };
+  # Disable direct wpa_supplicant configuration (we'll use NetworkManager)
+  networking.wireless.enable = false;
   
-  # Enable NetworkManager as well for easier wifi configuration
+  # Enable NetworkManager for network configuration
   networking.networkmanager = {
     enable = true;
-    wifi.backend = "wpa_supplicant";  # More compatible with minimal ISO
+    # Use the built-in backend (don't specify wpa_supplicant or iwd)
   };
   
   # Include wireless firmware and tools
@@ -86,7 +83,6 @@
     
     # Network tools
     networkmanager
-    wpa_supplicant
     wirelesstools
     iw
     inetutils
