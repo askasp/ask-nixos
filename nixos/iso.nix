@@ -33,6 +33,25 @@
   # Set hostname for the ISO
   networking.hostName = "cirrus-installer";
   
+  # Enable WiFi Support
+  networking.wireless = {
+    enable = false;  # We use NetworkManager instead
+    userControlled.enable = true;
+  };
+  
+  # Enable NetworkManager with WiFi support
+  networking.networkmanager = {
+    enable = true;
+    wifi.backend = "iwd";  # Modern WiFi backend
+  };
+  
+  # Include wireless firmware and tools
+  hardware.enableAllFirmware = true;
+  hardware.enableRedistributableFirmware = true;
+  
+  # Enable Bluetooth for potential USB tethering needs
+  hardware.bluetooth.enable = true;
+  
   # Enable useful tools for installation
   environment.systemPackages = with pkgs; [
     git
@@ -45,6 +64,18 @@
     gptfdisk
     cryptsetup
     nix-prefetch-git
+    
+    # Network tools
+    networkmanager
+    iwd
+    wpa_supplicant
+    wirelesstools
+    inetutils
+    
+    # For network diagnostics
+    ethtool
+    pciutils
+    usbutils
   ];
   
   # Enable flakes and nix command
