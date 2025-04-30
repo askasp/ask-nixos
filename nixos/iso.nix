@@ -24,8 +24,17 @@
   # Enable password authentication for the ISO
   services.openssh.settings.PasswordAuthentication = lib.mkForce true;
   
-  # Set a password for the root user on the ISO
-  users.users.root.initialPassword = "nixos";
+  # Set password for the root user - use ONLY initialPassword to avoid conflicts
+  users.users.root = {
+    # Use initialPassword and override any other password attributes
+    initialPassword = lib.mkForce "nixos";
+    # Explicitly set other password attributes to null to avoid conflicts
+    password = lib.mkForce null;
+    hashedPassword = lib.mkForce null;
+    passwordFile = lib.mkForce null;
+    hashedPasswordFile = lib.mkForce null;
+    initialHashedPassword = lib.mkForce null;
+  };
   
   # Add SSH keys for easy access during installation
   users.users.root.openssh.authorizedKeys.keys = [
