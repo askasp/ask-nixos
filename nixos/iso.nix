@@ -15,6 +15,10 @@
   # Use a stable kernel version to avoid issues
   boot.kernelPackages = pkgs.linuxPackages_latest;
   
+  # Disable ZFS to avoid "broken" package issues
+  boot.supportedFilesystems = lib.mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" "ext4" "vfat" ];
+  boot.kernelModules = lib.mkForce [ ];  # Don't include any extra kernel modules by default
+  
   # ISO-specific settings
   isoImage.edition = "cirrus-iso";
   isoImage.compressImage = true;
@@ -92,6 +96,11 @@
     pciutils
     usbutils
   ];
+  
+  # Disable various services to simplify the ISO
+  services.xserver.enable = lib.mkForce false;
+  services.pipewire.enable = lib.mkForce false;
+  hardware.pulseaudio.enable = lib.mkForce false;
   
   # Enable flakes and nix command
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
