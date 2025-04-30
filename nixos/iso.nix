@@ -13,7 +13,7 @@
   nixpkgs.config.allowUnfree = true;
   
   # ISO-specific settings
-  isoImage.edition = "cirrus-installer";
+  isoImage.edition = "cirrus-iso";
   isoImage.compressImage = true;
   isoImage.makeEfiBootable = true;
   isoImage.makeUsbBootable = true;
@@ -34,7 +34,7 @@
   ];
   
   # Set hostname for the ISO
-  networking.hostName = "cirrus-installer";
+  networking.hostName = "cirrus-iso";
   
   # Enable WiFi Support
   networking.wireless = {
