@@ -98,9 +98,9 @@
   ];
   
   # Disable various services to simplify the ISO
-  services.xserver.enable = lib.mkForce false;
-  services.pipewire.enable = lib.mkForce false;
-  hardware.pulseaudio.enable = lib.mkForce false;
+  # services.xserver.enable = lib.mkForce false;
+  # services.pipewire.enable = lib.mkForce false;
+  # hardware.pulseaudio.enable = lib.mkForce false;
   
   # Enable flakes and nix command
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
