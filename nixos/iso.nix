@@ -9,6 +9,9 @@
     ./modules/ssh.nix
   ];
 
+  # Allow unfree packages (for firmware, drivers, etc.)
+  nixpkgs.config.allowUnfree = true;
+  
   # ISO-specific settings
   isoImage.edition = "cirrus-installer";
   isoImage.compressImage = true;
