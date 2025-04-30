@@ -2,8 +2,8 @@
 
 {
   imports = [
-    # Use graphical installation media with Plasma (KDE)
-    "${modulesPath}/installer/cd-dvd/installation-cd-graphical-plasma5.nix"
+    # Use graphical installation media with latest Plasma (version 6)
+    "${modulesPath}/installer/cd-dvd/installation-cd-graphical-plasma.nix"
     
     # Include our SSH module
     ./modules/ssh.nix
@@ -11,6 +11,9 @@
 
   # Allow unfree packages (for firmware, drivers, etc.)
   nixpkgs.config.allowUnfree = true;
+  
+  # Use a stable kernel version to avoid issues
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   
   # ISO-specific settings
   isoImage.edition = "cirrus-iso";
@@ -92,6 +95,12 @@
   
   # Enable flakes and nix command
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  
+  # Try to download missing packages on build
+  nix.settings.substituters = [
+    "https://cache.nixos.org"
+    "https://nixos-cache.cachix.org" 
+  ];
   
   system.stateVersion = "23.11";
 } 
