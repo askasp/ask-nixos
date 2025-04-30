@@ -1,0 +1,19 @@
+# Nix build results
+result
+result-*
+
+# direnv
+.direnv/
+.envrc
+
+# Secrets
+secrets/*.age
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# System files
+.DS_Store 
