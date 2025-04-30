@@ -13,24 +13,29 @@
   };
 
   outputs = { self, nixpkgs, flake-utils, home-manager, agenix, ... }@inputs:
-    let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-      lib = nixpkgs.lib;
-    in
-    {
+    flake-utils.lib.eachDefaultSystem (localSystem: 
+      let
+        system = "x86_64-linux"; # Target system for NixOS
+        pkgs = import nixpkgs { inherit system; };
+      in
+      {
+        # Things that can build on any system
+        formatter = nixpkgs.legacyPackages.${localSystem}.nixpkgs-fmt;
+      }
+    ) // {
+      # NixOS configurations (only for x86_64-linux)
       nixosConfigurations = {
         iso = nixpkgs.lib.nixosSystem {
-          inherit system;
+          system = "x86_64-linux";
           specialArgs = { inherit inputs; };
           modules = [
             ./nixos/iso.nix
-            # Common modules can be added here if needed for the ISO
             agenix.nixosModules.default
           ];
         };
+
         cirrus = nixpkgs.lib.nixosSystem {
-          inherit system;
+          system = "x86_64-linux";
           specialArgs = { inherit inputs; };
           modules = [
             ./nixos/cirrus.nix
@@ -39,18 +44,12 @@
             {
                home-manager.useGlobalPkgs = true;
                home-manager.useUserPackages = true;
-               # Define user configuration path if needed, e.g.:
-               # home-manager.users.your-username = import ./home/your-username.nix;
             }
-            # Add agenix module here
           ];
         };
       };
 
-      # Example ISO image build
-      packages.${system}.iso = self.nixosConfigurations.iso.config.system.build.isoImage;
-
-      # Formatter for consistent code style
-      formatter.${system} = pkgs.nixpkgs-fmt;
+      # ISO image build (only available on x86_64-linux)
+      packages.x86_64-linux.iso = self.nixosConfigurations.iso.config.system.build.isoImage;
     };
 }

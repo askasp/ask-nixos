@@ -2,8 +2,8 @@
 
 {
   imports = [
-    # Use graphical installation media instead of minimal
-    "${modulesPath}/installer/cd-dvd/installation-cd-graphical-kde.nix"
+    # Use graphical installation media with Plasma (KDE)
+    "${modulesPath}/installer/cd-dvd/installation-cd-graphical-plasma5.nix"
     
     # Include our SSH module
     ./modules/ssh.nix
