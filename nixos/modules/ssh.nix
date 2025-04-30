@@ -27,5 +27,5 @@
   security.pam.enableSSHAgentAuth = true;
   
   # Add your firewall rule
-  networking.firewall.allowedTCPPorts = [ 22, 80, 443 ];
+  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
 } 
