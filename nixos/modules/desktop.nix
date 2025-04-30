@@ -1,13 +1,15 @@
 { config, lib, pkgs, ... }:
 
 {
-  # Enable X11 windowing system and KDE
+  # Enable X11 windowing system and KDE Plasma 6
   services.xserver = {
     enable = true;
     
-    # Enable the KDE Plasma Desktop Environment
+    # Enable the SDDM display manager
     displayManager.sddm.enable = true;
-    desktopManager.plasma5.enable = true;
+    
+    # Enable Plasma 6
+    desktopManager.plasma6.enable = true;
     
     # Configure keymap in X11
     layout = "us";

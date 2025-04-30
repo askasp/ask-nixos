@@ -2,8 +2,8 @@
 
 {
   imports = [
-    # Use graphical installation media with latest Plasma (version 6)
-    "${modulesPath}/installer/cd-dvd/installation-cd-graphical-plasma.nix"
+    # Use minimal installation media
+    "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
     
     # Include our SSH module
     ./modules/ssh.nix
@@ -50,14 +50,14 @@
   
   # Enable WiFi Support
   networking.wireless = {
-    enable = false;  # We use NetworkManager instead
+    enable = true;  # Enable wpa_supplicant for minimal ISO
     userControlled.enable = true;
   };
   
-  # Enable NetworkManager with WiFi support
+  # Enable NetworkManager as well for easier wifi configuration
   networking.networkmanager = {
     enable = true;
-    wifi.backend = "iwd";  # Modern WiFi backend
+    wifi.backend = "wpa_supplicant";  # More compatible with minimal ISO
   };
   
   # Include wireless firmware and tools
@@ -82,9 +82,9 @@
     
     # Network tools
     networkmanager
-    iwd
     wpa_supplicant
     wirelesstools
+    iw
     inetutils
     
     # For network diagnostics
