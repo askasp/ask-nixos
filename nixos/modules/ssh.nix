@@ -24,7 +24,7 @@
   };
 
   # SSH hardening (optional but recommended)
-  security.pam.sshAgentAuth = true;
+  security.pam.sshAgentAuth.enable = true;
   
   # Add your firewall rule
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
