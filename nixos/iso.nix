@@ -27,6 +27,9 @@
   # Set hostname for the ISO
   networking.hostName = "cirrus-iso";
   
+  # EXPLICITLY disable wireless.enable to avoid conflicts
+  networking.wireless.enable = lib.mkForce false;
+  
   # Enable NetworkManager for WiFi
   networking.networkmanager.enable = true;
   
