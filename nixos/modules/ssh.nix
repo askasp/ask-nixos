@@ -45,11 +45,13 @@
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [ 22 80 443 ];
-    # Drop everything else by default
-    defaultPolicy = {
-      incoming = "drop";
-      outgoing = "accept";
-    };
+    # Using alternative for default policy
+    extraCommands = ''
+      # Drop all incoming connections by default (except allowed ones)
+      iptables -P INPUT DROP
+      # Allow all outgoing connections
+      iptables -P OUTPUT ACCEPT
+    '';
     logRefusedConnections = true;
   };
   
