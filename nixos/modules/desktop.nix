@@ -1,23 +1,18 @@
 { config, lib, pkgs, ... }:
 
 {
-  # Enable X11 windowing system and KDE Plasma 6
-  services.xserver = {
-    enable = true;
-    
-    # Enable the SDDM display manager
-    displayManager.sddm.enable = true;
-    
-    # Enable Plasma 6
-    desktopManager.plasma6.enable = true;
-    
-    # Configure keymap in X11
-    xkb.layout = "us";
-    xkb.variant = "";
-  };
+  # Enable X11 windowing system 
+  services.xserver.enable = true;
+  services.xserver.xkb.layout = "us";
+  services.xserver.xkb.variant = "";
+  
+  # Enable the SDDM display manager (moved out of xserver hierarchy)
+  services.displayManager.sddm.enable = true;
+  
+  # Enable Plasma 6 (moved out of xserver hierarchy)
+  services.desktopManager.plasma6.enable = true;
 
-  # Enable audio with pipewire (modern replacement for sound.enable)
-  hardware.pulseaudio.enable = false;
+  # Enable audio with pipewire
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -27,7 +22,7 @@
   };
 
   # Enable touchpad support (for laptop)
-  # services.xserver.libinput.enable = true;
+  # services.libinput.enable = true;
 
   # Install useful desktop applications
   environment.systemPackages = with pkgs; [
@@ -41,26 +36,26 @@
     # Graphics
     gimp
     
-    # Utilities
+    # KDE/Plasma applications (using correct package paths)
     kdePackages.konsole
-    dolphin
-    ark
-    kate
-    kcalc
-    kdeconnect
-    spectacle # Screenshot tool
+    kdePackages.dolphin
+    kdePackages.ark
+    kdePackages.kate
+    kdePackages.kcalc
+    kdePackages.kdeconnect-kde
+    kdePackages.spectacle # Screenshot tool
     
     # Themes and customization
-    breeze-icons
-    breeze-gtk
+    kdePackages.breeze-icons
+    kdePackages.breeze-gtk
     
     # Media
     vlc
     
     # System tools
-    filelight
-    kinfocenter
-    plasma-systemmonitor
+    kdePackages.filelight
+    kdePackages.kinfocenter
+    kdePackages.plasma-systemmonitor
   ];
   
   # Enable Flatpak for additional applications (optional)
