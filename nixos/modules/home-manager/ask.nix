@@ -54,7 +54,6 @@ in
     lazygit
     yazi  # Terminal file manager (for tmux binding)
     htop
-    openssl
     fzf  # Fuzzy finder
     
     # Custom aider script
@@ -186,4 +185,13 @@ in
   
   # This makes home-manager create symlinks automatically
   home.stateVersion = "23.11";
+  
+  # Set environment variables for development
+  home.sessionVariables = {
+    # For Rust/Cargo builds
+    OPENSSL_DIR = "${pkgs.openssl.dev}";
+    OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
+    OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include";
+    PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+  };
 } 

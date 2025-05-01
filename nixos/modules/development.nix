@@ -59,6 +59,11 @@ in
     htop
     curl
     wget
+    
+    # Add OpenSSL and other libraries needed for Rust development
+    openssl
+    openssl.dev  # Development headers
+    pkg-config   # For finding libraries
   ];
   
   # Add a note to the login message
@@ -81,4 +86,7 @@ in
   
   # Docker for container development (optional)
   virtualisation.docker.enable = true;
+  
+  # Enable unfree packages if needed
+  nixpkgs.config.allowUnfree = true;
 } 
