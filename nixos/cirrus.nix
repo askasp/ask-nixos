@@ -69,6 +69,12 @@
     fish       # For tmux integration
   ];
   
+  # Set default editor to lvim
+  environment.variables = {
+    EDITOR = "lvim";
+    VISUAL = "lvim";
+  };
+  
   # Enable fish shell
   programs.fish.enable = true;
   

@@ -54,6 +54,7 @@ in
     lazygit
     yazi  # Terminal file manager (for tmux binding)
     htop
+    openssl
     fzf  # Fuzzy finder
     
     # Custom aider script
