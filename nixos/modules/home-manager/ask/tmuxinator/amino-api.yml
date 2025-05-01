@@ -9,7 +9,7 @@ windows:
 
   - aider: 
       panes:
-        - aider --model sonnet --api-key anthropic=YOUR_API_KEY_HERE --watch-files --no-auto-commit
+        - aider --model sonnet --watch-files --no-auto-commit
   - terminal:
   - lazygit:
      panes:
