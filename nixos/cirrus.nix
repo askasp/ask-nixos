@@ -19,6 +19,7 @@
     ./modules/services.nix
     ./modules/databases.nix
     ./modules/amino-api.nix
+    ./modules/webhook-deploy.nix
     # Uncomment this when you're ready to use agenix for secrets
     # ./modules/agenix-amino-api.nix
     # Add other modules as needed
@@ -34,6 +35,15 @@
     port = 5150;
     # We'll add the environment file with agenix later
     # environmentFile = config.age.secrets.amino-api-env.path;
+  };
+
+  # Enable webhook for continuous deployment
+  services.webhook-deploy = {
+    enable = true;
+    repoPath = "/home/ask/git/amino_api";
+    port = 9000;
+    # Generate a secure token for production
+    secretToken = "change-me-in-production";
   };
 
   # Use the systemd-boot EFI boot loader

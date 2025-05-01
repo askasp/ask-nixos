@@ -31,6 +31,13 @@
         formatter = nixpkgs.legacyPackages.${localSystem}.nixpkgs-fmt;
       }
     ) // {
+      # Define the overlay
+      overlays.default = final: prev: {
+        amino-api = final.callPackage ./nixos/pkgs/amino-api.nix {
+          src = amino-api;
+        };
+      };
+
       # NixOS configurations (only for x86_64-linux)
       nixosConfigurations = {
         iso = nixpkgs.lib.nixosSystem {
@@ -46,6 +53,10 @@
           system = "x86_64-linux";
           specialArgs = { inherit inputs; };
           modules = [
+            # Apply the overlay to make amino-api available in pkgs
+            ({ pkgs, ... }: {
+              nixpkgs.overlays = [ self.overlays.default ];
+            })
             ./nixos/cirrus.nix
             home-manager.nixosModules.home-manager
             agenix.nixosModules.default
@@ -54,13 +65,6 @@
                home-manager.useUserPackages = true;
             }
           ];
-        };
-      };
-
-      # Overlay with custom packages
-      overlays.default = final: prev: {
-        amino-api = final.callPackage ./nixos/pkgs/amino-api.nix {
-          src = amino-api;
         };
       };
 

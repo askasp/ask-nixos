@@ -20,13 +20,18 @@ rustPlatform.buildRustPackage {
     hash = lib.fakeHash; # Will need to be updated when you have access
   };
 
-  # When you have access to the repo:
-  # To get the hash for the Cargo dependencies, run:
-  # nix-prefetch-git https://github.com/AminoNordics/amino_api.git
-  # Then, to get the cargoHash, first comment out the cargoHash line, then run:
-  # nix-build -A amino-api 
-  # The build will fail, but will tell you the expected cargoHash
-  cargoHash = lib.fakeHash;
+  # To get the cargoHash:
+  # 1. First, uncomment this line to make the build fail and show expected hash
+  # 2. It will print the expected hash in the error message
+  # 3. Copy that hash back into this field
+  cargoHash = null; # Comment this line later
+
+  # We use fetchCargoTarball to avoid needing the cargoHash
+  # This helps during initial setup
+  # Once you get the proper cargoHash from the error, 
+  # comment these two lines and use cargoHash instead
+  cargoLock.lockFile = "${src}/Cargo.lock";
+  fetchCargoDeps = null;
 
   nativeBuildInputs = [
     pkg-config
