@@ -47,12 +47,12 @@
     -- Set background to light before setting the colorscheme
     vim.opt.background = "light"
     
-    -- Set the colorscheme to neobones (Kindle-like light theme)
-    lvim.colorscheme = "neobones"
+    -- Set the colorscheme to GitHub Light
+    lvim.colorscheme = "github_light"
     -- Other good light theme options you can try:
+    -- lvim.colorscheme = "neobones" -- Kindle-like light theme
     -- lvim.colorscheme = "zenbones" -- another excellent light theme
     -- lvim.colorscheme = "rosebones" -- light theme with rose tint
-    -- lvim.colorscheme = "github_light" -- GitHub's light theme
     -- lvim.colorscheme = "catppuccin-latte" -- Light variant of Catppuccin
     
     vim.wo.relativenumber = true
