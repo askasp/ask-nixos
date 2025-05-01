@@ -68,6 +68,41 @@ in
     # Add tmuxinator configs from the external files
     "tmuxinator/amino-api.yml".source = ./ask/tmuxinator/amino-api.yml;
     
+    # LunarVim config to use system-provided rust-analyzer
+    "lvim/config.lua".text = ''
+      -- General LunarVim configuration
+      lvim.log.level = "warn"
+      lvim.format_on_save.enabled = true
+      
+      -- Configure rust-analyzer to use system binary from Nix instead of Mason
+      vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
+      
+      local mason_path = vim.fn.glob(vim.fn.stdpath "data" .. "/mason/")
+      
+      local function is_binary_present_on_path(binary_name)
+        if vim.fn.executable(binary_name) == 1 then
+          return binary_name, true
+        end
+        return binary_name, false
+      end
+
+      local rustanalyzer_bin, found = is_binary_present_on_path("rust-analyzer")
+      local cmd = { rustanalyzer_bin }
+      
+      require("lvim.lsp.manager").setup("rust_analyzer", {
+        cmd = cmd,
+        settings = {
+          ["rust-analyzer"] = {
+            checkOnSave = {
+              command = "clippy",
+            },
+          },
+        },
+      })
+      
+      -- Add any other custom LunarVim settings here
+    '';
+    
     # Additional tmuxinator configs can be added here
     # "tmuxinator/another-project.yml".source = ./ask/tmuxinator/another-project.yml;
   };
