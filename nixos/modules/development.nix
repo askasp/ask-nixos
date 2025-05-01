@@ -19,51 +19,6 @@ let
       echo "LunarVim is already installed."
     fi
   '';
-  
-  # Create a Rust development environment shell script - simplified version
-  rust-env = pkgs.writeShellScriptBin "rust-env" ''
-    # Set up environment for Rust development
-    export OPENSSL_DIR="${pkgs.openssl.dev}"
-    export OPENSSL_LIB_DIR="${pkgs.openssl.out}/lib"
-    export OPENSSL_INCLUDE_DIR="${pkgs.openssl.dev}/include"
-    export PKG_CONFIG_PATH="${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.pkg-config}/lib/pkgconfig"
-    export LD_LIBRARY_PATH="${pkgs.openssl.out}/lib:$LD_LIBRARY_PATH"
-    
-    # Execute shell with environment set
-    exec $SHELL
-  '';
-  
-  # Create a simple shell.nix template file
-  rust-shell-template = pkgs.writeShellScriptBin "create-rust-shell" ''
-    cat > shell.nix << EOF
-{ pkgs ? import <nixpkgs> {} }:
-
-pkgs.mkShell {
-  buildInputs = with pkgs; [
-    rustc
-    cargo
-    rust-analyzer
-    clippy
-    rustfmt
-    
-    # Dependencies
-    openssl
-    openssl.dev
-    pkg-config
-  ];
-  
-  shellHook = ''
-    export OPENSSL_DIR=\${pkgs.openssl.dev}
-    export OPENSSL_LIB_DIR=\${pkgs.openssl.out}/lib
-    export OPENSSL_INCLUDE_DIR=\${pkgs.openssl.dev}/include
-    export PKG_CONFIG_PATH=\${pkgs.openssl.dev}/lib/pkgconfig
-    export LD_LIBRARY_PATH=\${pkgs.openssl.out}/lib:\$LD_LIBRARY_PATH
-    echo "Rust development environment ready!"
-  '';
-}
-EOF
-    echo "Created shell.nix file for Rust development"
-  '';
 in
 {
   # Common development tools
@@ -109,10 +64,6 @@ in
     openssl
     openssl.dev  # Development headers
     pkg-config   # For finding libraries
-    
-    # Custom scripts
-    rust-env
-    rust-shell-template
   ];
   
   # System-wide environment variables
@@ -123,6 +74,17 @@ in
     OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include";
   };
   
+  # Add a system-wide shell script to ensure OpenSSL environment is always set
+  environment.etc."profile.d/rust-openssl.sh" = {
+    text = ''
+      export PKG_CONFIG_PATH="${pkgs.openssl.dev}/lib/pkgconfig:$PKG_CONFIG_PATH"
+      export OPENSSL_DIR="${pkgs.openssl.dev}"
+      export OPENSSL_LIB_DIR="${pkgs.openssl.out}/lib"
+      export OPENSSL_INCLUDE_DIR="${pkgs.openssl.dev}/include"
+    '';
+    mode = "0644";
+  };
+  
   # Add a note to the login message
   users.motd = ''
     Welcome to NixOS!
@@ -130,9 +92,7 @@ in
     If this is your first login, run:
     setup-lunarvim
     
-    For Rust development with OpenSSL:
-    1. Use global environment (available now)
-    2. Or run: create-rust-shell && nix-shell
+    Rust development with OpenSSL is pre-configured.
   '';
   
   # Enable developer-friendly options
