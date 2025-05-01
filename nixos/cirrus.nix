@@ -58,6 +58,9 @@
     useUserPackages = true;  # Merge into the user profile
     users.ask = import ./modules/home-manager/ask.nix;
     
+    # Add backup file extension to handle existing files
+    backupFileExtension = "backup";
+    
     # Give home-manager access to agenix secrets
     extraSpecialArgs = { inherit inputs; };
   };
