@@ -25,6 +25,12 @@
     
     # Use ZSH as the default shell
     shell = pkgs.zsh;
+    
+    # Create home directory during system activation
+    createHome = true;
+    home = "/home/ask";
+    # Ensure proper permissions
+    homeMode = "0750";
   };
   
   # Define additional groups for service management

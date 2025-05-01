@@ -1,5 +1,25 @@
 { config, pkgs, ... }:
 
+let
+  # Create a custom LunarVim package
+  lunarvim = pkgs.writeShellScriptBin "lvim" ''
+    # Launcher script for LunarVim
+    exec ${pkgs.neovim}/bin/nvim -u ~/.local/share/lunarvim/lvim/init.lua "$@"
+  '';
+
+  # Create a setup script that will be run once on first login
+  lunarvim-setup = pkgs.writeShellScriptBin "setup-lunarvim" ''
+    # Only run if LunarVim is not already installed
+    if [ ! -d "$HOME/.local/share/lunarvim" ]; then
+      echo "Installing LunarVim for user $(whoami)..."
+      mkdir -p $HOME/.local/share
+      ${pkgs.curl}/bin/curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash -s -- --no-install-dependencies
+      echo "LunarVim installed successfully!"
+    else
+      echo "LunarVim is already installed."
+    fi
+  '';
+in
 {
   # Common development tools
   environment.systemPackages = with pkgs; [
@@ -24,10 +44,14 @@
     
     # Editor dependencies for LunarVim
     neovim
-    python3  # For some neovim plugins
-    nodejs   # For some neovim plugins
-    ripgrep  # Used by Telescope
-    fd       # Used by Telescope
+    python3
+    nodejs
+    ripgrep
+    fd
+    
+    # LunarVim setup
+    lunarvim-setup
+    lunarvim
     
     # Other useful tools
     jq
@@ -37,18 +61,14 @@
     wget
   ];
   
-  # Set up LunarVim for user (can be moved to a home-manager config)
-  # This is a simplified installation approach; for a more complete setup, 
-  # consider using home-manager to manage the config files
-  system.activationScripts.installLunarVim = ''
-    if [ ! -d /home/youruser/.local/share/lunarvim ]; then
-      echo "Installing LunarVim..."
-      export USER=youruser
-      export HOME=/home/$USER
-      mkdir -p $HOME/.local/share
-      chown -R $USER:users $HOME/.local
-      sudo -u $USER bash -c "curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash -s -- --no-install-dependencies"
-    fi
+  # Add a note to the login message
+  users.motd = ''
+    Welcome to NixOS!
+    
+    If this is your first login, run:
+    setup-lunarvim
+    
+    to install LunarVim.
   '';
   
   # Enable developer-friendly options

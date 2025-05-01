@@ -3,7 +3,7 @@
 {
   imports = [
     # Hardware detection (needs to be generated on the target system)
-    # ./hardware-configuration.nix
+    ./hardware-configuration.nix
 
     # Import all our modules
     ./modules/common.nix
@@ -48,6 +48,16 @@
     dates = "weekly";
     options = "--delete-older-than 30d";
   };
+  
+  # Home-manager configuration for user "ask"
+  home-manager.users.ask = import ./modules/home-manager/ask.nix;
+  
+  # Enable automatic installation of LunarVim during activation
+  system.activationScripts.installLunarVimDeps = ''
+    echo "Ensuring LunarVim dependencies are available..."
+    mkdir -p /home/ask/.local/share
+    chown -R ask:users /home/ask/.local
+  '';
   
   # Create a services directory structure
   system.activationScripts.serviceDirectories = ''
