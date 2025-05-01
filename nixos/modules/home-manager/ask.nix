@@ -89,7 +89,7 @@ in
             callback = function()
               -- Create symlink from Mason's rust-analyzer to system one if needed
               local mason_bin_dir = vim.fn.expand("~/.local/share/lvim/mason/bin")
-              local system_rust_analyzer = "/run/current-system/sw/bin/rust-analyzer"
+              local system_rust_analyzer = vim.fn.expand("${pkgs.rust-analyzer}/bin/rust-analyzer")
               local mason_rust_analyzer = mason_bin_dir .. "/rust-analyzer"
               
               -- Check if system rust-analyzer exists
@@ -101,7 +101,7 @@ in
                 vim.fn.system("rm -f " .. mason_rust_analyzer)
                 
                 -- Create symlink
-                vim.fn.system("ln -s " .. system_rust_analyzer .. " " .. mason_rust_analyzer)
+                vim.fn.system("ln -sf " .. system_rust_analyzer .. " " .. mason_rust_analyzer)
               end
             end,
           }
@@ -109,7 +109,7 @@ in
       }
       
       -- Manual setup of rust-analyzer
-      local system_analyzer_path = "/run/current-system/sw/bin/rust-analyzer"
+      local system_analyzer_path = "${pkgs.rust-analyzer}/bin/rust-analyzer"
       
       require("lvim.lsp.manager").setup("rust_analyzer", {
         cmd = { system_analyzer_path },
