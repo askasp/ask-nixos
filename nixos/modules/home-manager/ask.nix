@@ -96,19 +96,6 @@ in
     
     # Updated to initContent
     initContent = ''
-      # Check if LunarVim needs to be installed
-      if [ ! -d "$HOME/.local/share/lunarvim" ]; then
-        echo "LunarVim not detected. Installing now..."
-        
-        # Create required directories
-        mkdir -p $HOME/.local/share
-        
-        # Install LunarVim
-        bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh) --no-install-dependencies
-        
-        echo "LunarVim installation complete!"
-      fi
-      
       # Add LunarVim to path
       if [ -d "$HOME/.local/bin" ]; then
         export PATH="$HOME/.local/bin:$PATH"
@@ -122,9 +109,6 @@ in
       theme = "robbyrussell";
     };
   };
-  
-  # Let system manage neovim to avoid collisions
-  programs.neovim.enable = false;
   
   # Git configuration
   programs.git = {
