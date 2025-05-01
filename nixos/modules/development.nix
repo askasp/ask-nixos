@@ -20,11 +20,22 @@ let
       
       # Create necessary config directories
       mkdir -p $HOME/.config/lvim
+      mkdir -p $HOME/.local/share/lvim/mason/bin
+      
+      # Create symlink to system rust-analyzer
+      echo "Creating symlink for rust-analyzer..."
+      ln -sf /run/current-system/sw/bin/rust-analyzer $HOME/.local/share/lvim/mason/bin/rust-analyzer
       
       echo "LunarVim installed successfully!"
     else
       echo "LunarVim is already installed."
     fi
+  '';
+  
+  # Create a symlink for rust-analyzer to make sure it's available
+  rust-analyzer-link = pkgs.runCommand "rust-analyzer-link" {} ''
+    mkdir -p $out/bin
+    ln -s ${pkgs.rust-analyzer}/bin/rust-analyzer $out/bin/rust-analyzer
   '';
 in
 {
@@ -42,9 +53,9 @@ in
     cargo   # Rust package manager
     rustc   # Rust compiler
     rust-analyzer # LSP for Rust
+    rust-analyzer-link # Ensure it has the right name
     
     # Language servers for code completion and analysis
-    rust-analyzer
     nodePackages.typescript-language-server
     nodePackages.vscode-langservers-extracted # HTML, CSS, JSON, ESLint
     
@@ -80,6 +91,13 @@ in
     openssl.dev  # Development headers
     pkg-config   # For finding libraries
   ];
+  
+  # Create a custom wrapper for rust-analyzer in system-wide location
+  system.activationScripts.rustAnalyzer = ''
+    echo "Creating rust-analyzer wrapper..."
+    mkdir -p /run/current-system/sw/bin
+    ln -sf ${pkgs.rust-analyzer}/bin/rust-analyzer /run/current-system/sw/bin/rust-analyzer
+  '';
   
   # System-wide environment variables
   environment.variables = {

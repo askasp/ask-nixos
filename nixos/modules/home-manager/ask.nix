@@ -74,23 +74,45 @@ in
       lvim.log.level = "warn"
       lvim.format_on_save.enabled = true
       
-      -- Configure rust-analyzer to use system binary from Nix instead of Mason
+      -- Prevent Mason from installing rust-analyzer
+      lvim.lsp.installer.setup.ensure_installed = {} -- Disable automatic installation
+      
+      -- Skip Mason's rust-analyzer and use system one directly
       vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
       
-      local mason_path = vim.fn.glob(vim.fn.stdpath "data" .. "/mason/")
+      -- Add custom commands to run before LunarVim starts
+      lvim.autocommands = {
+        {
+          "VimEnter", -- When Vim starts
+          {
+            pattern = "*",
+            callback = function()
+              -- Create symlink from Mason's rust-analyzer to system one if needed
+              local mason_bin_dir = vim.fn.expand("~/.local/share/lvim/mason/bin")
+              local system_rust_analyzer = "/run/current-system/sw/bin/rust-analyzer"
+              local mason_rust_analyzer = mason_bin_dir .. "/rust-analyzer"
+              
+              -- Check if system rust-analyzer exists
+              if vim.fn.executable(system_rust_analyzer) == 1 then
+                -- Create mason bin dir if it doesn't exist
+                vim.fn.system("mkdir -p " .. mason_bin_dir)
+                
+                -- Remove existing file/symlink if it exists
+                vim.fn.system("rm -f " .. mason_rust_analyzer)
+                
+                -- Create symlink
+                vim.fn.system("ln -s " .. system_rust_analyzer .. " " .. mason_rust_analyzer)
+              end
+            end,
+          }
+        }
+      }
       
-      local function is_binary_present_on_path(binary_name)
-        if vim.fn.executable(binary_name) == 1 then
-          return binary_name, true
-        end
-        return binary_name, false
-      end
-
-      local rustanalyzer_bin, found = is_binary_present_on_path("rust-analyzer")
-      local cmd = { rustanalyzer_bin }
+      -- Manual setup of rust-analyzer
+      local system_analyzer_path = "/run/current-system/sw/bin/rust-analyzer"
       
       require("lvim.lsp.manager").setup("rust_analyzer", {
-        cmd = cmd,
+        cmd = { system_analyzer_path },
         settings = {
           ["rust-analyzer"] = {
             checkOnSave = {
