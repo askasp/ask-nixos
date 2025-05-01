@@ -10,6 +10,31 @@
     plugins = with pkgs.vimPlugins; [
       lush-nvim
       zenbones-nvim
+      # Essential plugins that might be needed
+      nvim-treesitter
+      nvim-lspconfig
+      plenary-nvim
+      telescope-nvim
+    ];
+    
+    # Install all the language dependencies we need
+    extraPackages = with pkgs; [
+      # LSP servers
+      nodePackages.typescript-language-server
+      nodePackages.vscode-langservers-extracted # html, css, json, eslint
+      nodePackages."@tailwindcss/language-server"
+      lua-language-server
+      pyright
+      rust-analyzer
+      
+      # Formatters and linters
+      nodePackages.prettier
+      stylua
+      black
+      
+      # Tools needed for telescope and other plugins
+      ripgrep
+      fd
     ];
   };
   
@@ -20,6 +45,16 @@
     lvim.format_on_save.enabled = true
     lvim.colorscheme = "neobones"
     vim.wo.relativenumber = true
+    
+    -- Ensure tree-sitter is enabled and configured
+    lvim.builtin.treesitter.ensure_installed = {
+      "bash", "c", "cpp", "javascript", "json", "lua", "python", "typescript",
+      "tsx", "css", "rust", "java", "yaml", "markdown", "markdown_inline"
+    }
+    lvim.builtin.treesitter.highlight.enabled = true
+    
+    -- Configure LSP
+    lvim.lsp.installer.setup.automatic_installation = false
     
     -- Prevent Mason from installing rust-analyzer
     lvim.lsp.installer.setup.ensure_installed = {} -- Disable automatic installation
@@ -69,6 +104,41 @@
       },
     })
     
+    -- Ensure other LSPs are properly configured
+    -- These will use the system-installed servers from NixOS
+    local lspconfig = require("lspconfig")
+    
+    -- TypeScript/JavaScript
+    if vim.fn.executable("typescript-language-server") == 1 then
+      lspconfig.tsserver.setup{}
+    end
+    
+    -- Python
+    if vim.fn.executable("pyright") == 1 then
+      lspconfig.pyright.setup{}
+    end
+    
+    -- Lua
+    if vim.fn.executable("lua-language-server") == 1 then
+      lspconfig.lua_ls.setup{
+        settings = {
+          Lua = {
+            diagnostics = {
+              globals = { "vim", "lvim" }
+            }
+          }
+        }
+      }
+    end
+    
+    -- Make sure we handle formatting correctly
+    local formatters = require "lvim.lsp.null-ls.formatters"
+    formatters.setup {
+      { command = "prettier", filetypes = { "javascript", "typescript", "css", "html", "json" } },
+      { command = "stylua", filetypes = { "lua" } },
+      { command = "black", filetypes = { "python" } },
+    }
+    
     -- Add zenbones and other plugins
     lvim.plugins = {
       {
@@ -93,6 +163,43 @@
           })
         end
       },
+      -- Additional plugins for better LSP experience
+      {
+        "folke/trouble.nvim",
+        cmd = "TroubleToggle",
+      },
+      {
+        "folke/lsp-colors.nvim",
+      },
+    }
+    
+    -- Enhance status line with LSP info
+    lvim.builtin.lualine.sections.lualine_c = {
+      {
+        "diagnostics",
+        sources = { "nvim_diagnostic" },
+        symbols = { error = " ", warn = " ", info = " ", hint = " " },
+      },
+      { "filename", path = 1 },
+      {
+        function()
+          local msg = "No LSP"
+          local buf_ft = vim.api.nvim_buf_get_option(0, "filetype")
+          local clients = vim.lsp.get_active_clients()
+          if next(clients) == nil then return msg end
+          
+          local lsp_names = {}
+          for _, client in ipairs(clients) do
+            local filetypes = client.config.filetypes
+            if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
+              table.insert(lsp_names, client.name)
+            end
+          end
+          
+          return table.concat(lsp_names, ", ")
+        end,
+        icon = " LSP:",
+      }
     }
   '';
   

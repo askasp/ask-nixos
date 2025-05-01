@@ -48,10 +48,15 @@ in
     jq
     
     # Additional dependencies for LunarVim
-    # Don't include neovim itself to avoid collisions
     python3
     nodejs
     tree-sitter
+    gcc # Needed for TreeSitter compilation
+    gnumake # Needed for plugin compilation
+    unzip # Used by Mason for package extraction
+    
+    # LSP-related tools
+    nodePackages.npm
     
     # Additional user tools
     tmux
@@ -63,9 +68,6 @@ in
     
     # Custom aider script
     aider
-    
-    # Python packages
-    # python3Packages.aider-chat  # Removed to avoid collision with custom aider script
   ];
   
   # Use external tmuxinator config files
