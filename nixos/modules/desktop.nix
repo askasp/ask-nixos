@@ -16,8 +16,7 @@
     xkbVariant = "";
   };
 
-  # Enable sound with pipewire
-  sound.enable = true;
+  # Enable audio with pipewire (modern replacement for sound.enable)
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
