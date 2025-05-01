@@ -52,7 +52,7 @@
   '';
   
   # Enable developer-friendly options
-  programs.bash.enableCompletion = true;
+  programs.bash.completion.enable = true;
   programs.fish.enable = true;
   programs.zsh.enable = true;
   

@@ -12,8 +12,8 @@
     desktopManager.plasma6.enable = true;
     
     # Configure keymap in X11
-    layout = "us";
-    xkbVariant = "";
+    xkb.layout = "us";
+    xkb.variant = "";
   };
 
   # Enable audio with pipewire (modern replacement for sound.enable)
@@ -42,7 +42,7 @@
     gimp
     
     # Utilities
-    konsole
+    kdePackages.konsole
     dolphin
     ark
     kate
