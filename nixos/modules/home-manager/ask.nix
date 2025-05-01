@@ -60,7 +60,7 @@ in
     aider
     
     # Python packages
-    python3Packages.aider-chat
+    # python3Packages.aider-chat  # Removed to avoid collision with custom aider script
   ];
   
   # Use external tmuxinator config files
