@@ -157,10 +157,6 @@ in
     
     plugins = [
       {
-        plugin = pkgs.tmuxPlugins.tpm;
-        extraConfig = "set -g @plugin 'tmux-plugins/tpm'";
-      }
-      {
         plugin = pkgs.tmuxPlugins.sensible;
         extraConfig = "set -g @plugin 'tmux-plugins/tmux-sensible'";
       }
