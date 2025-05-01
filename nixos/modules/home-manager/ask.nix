@@ -1,5 +1,10 @@
 { config, pkgs, lib, ... }:
 
+let
+  aider = pkgs.writeShellScriptBin "aider" ''
+    OPENROUTER_API_KEY='' ${pkgs.python3Packages.aider-chat}/bin/aider "$@"
+  '';
+in
 {
   # Home Manager configuration for user "ask"
   
@@ -27,8 +32,17 @@
     
     # Additional user tools
     tmux
+    tmuxinator
+    lazygit
+    yazi  # Terminal file manager (for tmux binding)
     htop
     fzf  # Fuzzy finder
+    
+    # Custom aider script
+    aider
+    
+    # Python packages
+    python3Packages.aider-chat
   ];
   
   # ZSH configuration (to match system shell)
@@ -84,12 +98,91 @@
     userEmail = "aksel@stadler.no";
   };
   
+  # Create tmuxinator config directory
+  xdg.configFile."tmuxinator/amino-api.yml".text = ''
+name: amino-api
+root: ~/git/amino_api
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - hx
+
+  - aider: 
+      panes:
+        -  OPENROUTER_API_KEY='' aider --model openrouter/google/gemini-2.5-pro-preview-03-25 --watch-files --no-auto-commit
+  - terminal:
+  - lazygit:
+     panes:
+      - lazygit
+
+  - server:
+      panes:
+        - cargo loco start
+        - cargo run --bin cqrs_server
+  '';
+  
   # Terminal multiplexer configuration
   programs.tmux = {
     enable = true;
     shortcut = "a";
     terminal = "screen-256color";
     historyLimit = 10000;
+    mouse = true;
+    
+    # Custom tmux configuration (Linux version)
+    extraConfig = ''
+      set -g prefix C-a
+      bind h select-pane -L
+      bind j select-pane -D
+      bind k select-pane -U
+      bind l select-pane -R
+      bind g display-popup -w90% -h90% -d "#{pane_current_path}" -E lazygit
+      bind-key t display-popup -w90% -h90% -d "#{pane_current_path}" -E fish
+      bind-key r display-popup -w90% -h90% -d "#{pane_current_path}" -E yazi
+
+      unbind C-c
+
+      # Use xclip for Linux copy
+      bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -selection clipboard"
+
+      set -g xterm-keys on
+      set -s escape-time 0
+      setw -g mode-keys vi
+
+      # Project shells
+      # Enter project selector with prefix + a
+      bind-key a switch-client -T project \; display-message "Project selector: f = frontend, p = api, c = cqrs, n = nixos, d= amino_dev, s=ask_server, m=mono, a=aichat"
+
+      bind -T project f run-shell 'tmuxinator start amino-frontend'
+      bind -T project p run-shell 'tmuxinator start amino-api'
+      bind -T project c run-shell 'tmuxinator start ask-cqrs'
+      bind -T project n run-shell 'tmuxinator start amino_nixos'
+      bind -T project d run-shell 'tmuxinator start amino_dev'
+      bind -T project s run-shell 'tmuxinator start ask-server'
+      bind -T project m run-shell 'tmuxinator start mono'
+      bind -T project a run-shell 'tmuxinator start aichat'
+    '';
+    
+    plugins = [
+      {
+        plugin = pkgs.tmuxPlugins.tpm;
+        extraConfig = "set -g @plugin 'tmux-plugins/tpm'";
+      }
+      {
+        plugin = pkgs.tmuxPlugins.sensible;
+        extraConfig = "set -g @plugin 'tmux-plugins/tmux-sensible'";
+      }
+      {
+        plugin = pkgs.tmuxPlugins.extrakto;
+        extraConfig = "set -g @plugin 'laktak/extrakto'";
+      }
+      {
+        plugin = pkgs.tmuxPlugins.resurrect;
+        extraConfig = "set -g @plugin 'tmux-plugins/tmux-resurrect'";
+      }
+    ];
   };
   
   # This makes home-manager create symlinks automatically

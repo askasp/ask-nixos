@@ -59,7 +59,12 @@
   # Make sure neovim is installed at system level since we disabled it in home-manager
   environment.systemPackages = with pkgs; [
     neovim
+    xclip      # For clipboard support in tmux
+    fish       # For tmux integration
   ];
+  
+  # Enable fish shell
+  programs.fish.enable = true;
   
   # Enable automatic installation of LunarVim during activation
   system.activationScripts.installLunarVimDeps = ''
