@@ -3,8 +3,8 @@
 {
   # Home Manager configuration for user "ask"
   
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  # Remove nixpkgs.config since we use global packages
+  # nixpkgs.config.allowUnfree = true;
   
   # Basic information about the user
   home.username = "ask";
@@ -19,8 +19,8 @@
     fd
     jq
     
-    # Neovim with LunarVim setup
-    neovim
+    # Additional dependencies for LunarVim
+    # Don't include neovim itself to avoid collisions
     python3
     nodejs
     tree-sitter
@@ -35,15 +35,18 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    enableAutosuggestions = true;
-    enableSyntaxHighlighting = true;
+    
+    # Updated option names
+    syntaxHighlighting.enable = true;
+    autosuggestion.enable = true;
     
     shellAliases = {
       ll = "ls -la";
       update = "sudo nixos-rebuild switch --flake /etc/nixos#cirrus";
     };
     
-    initExtra = ''
+    # Updated to initContent
+    initContent = ''
       # Check if LunarVim needs to be installed
       if [ ! -d "$HOME/.local/share/lunarvim" ]; then
         echo "LunarVim not detected. Installing now..."
@@ -71,13 +74,8 @@
     };
   };
   
-  # Neovim configuration (base for LunarVim)
-  programs.neovim = {
-    enable = true;
-    viAlias = true;
-    vimAlias = true;
-    defaultEditor = true;
-  };
+  # Let system manage neovim to avoid collisions
+  programs.neovim.enable = false;
   
   # Git configuration
   programs.git = {

@@ -38,8 +38,8 @@
     ];
   };
 
-  # SSH hardening
-  security.pam.enableSSHAgentAuth = true;
+  # SSH hardening - updated option name
+  security.pam.sshAgentAuth.enable = true;
   
   # Firewall configuration - only allow specified ports
   networking.firewall = {

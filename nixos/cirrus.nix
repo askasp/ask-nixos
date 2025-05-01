@@ -50,7 +50,16 @@
   };
   
   # Home-manager configuration for user "ask"
-  home-manager.users.ask = import ./modules/home-manager/ask.nix;
+  home-manager = {
+    useGlobalPkgs = true;  # Use the system's packages
+    useUserPackages = true;  # Merge into the user profile
+    users.ask = import ./modules/home-manager/ask.nix;
+  };
+  
+  # Make sure neovim is installed at system level since we disabled it in home-manager
+  environment.systemPackages = with pkgs; [
+    neovim
+  ];
   
   # Enable automatic installation of LunarVim during activation
   system.activationScripts.installLunarVimDeps = ''
