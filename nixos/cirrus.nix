@@ -20,14 +20,6 @@
     # Add other modules as needed
   ];
 
-  # Add a minimal fallback filesystem configuration just in case
-  fileSystems = lib.mkIf (!(config?fileSystems && config.fileSystems?"/")) {
-    "/" = {
-      device = "/dev/disk/by-label/nixos";
-      fsType = "ext4";
-    };
-  };
-
   # Set your hostname
   networking.hostName = "cirrus";
 
