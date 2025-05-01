@@ -19,6 +19,52 @@ let
       echo "LunarVim is already installed."
     fi
   '';
+  
+  # Create a Rust development environment shell script
+  rust-env = pkgs.writeShellScriptBin "rust-env" ''
+    # Set up environment for Rust development
+    export OPENSSL_DIR="${pkgs.openssl.dev}"
+    export OPENSSL_LIB_DIR="${pkgs.openssl.out}/lib"
+    export OPENSSL_INCLUDE_DIR="${pkgs.openssl.dev}/include"
+    export PKG_CONFIG_PATH="${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.pkg-config}/lib/pkgconfig"
+    export LD_LIBRARY_PATH="${pkgs.openssl.out}/lib:$LD_LIBRARY_PATH"
+    
+    # Create shell.nix file in the current directory if it doesn't exist
+    if [ ! -f shell.nix ]; then
+      cat > shell.nix << 'EOF'
+{ pkgs ? import <nixpkgs> {} }:
+
+pkgs.mkShell {
+  buildInputs = with pkgs; [
+    rustc
+    cargo
+    rust-analyzer
+    clippy
+    rustfmt
+    
+    # Dependencies
+    openssl
+    openssl.dev
+    pkg-config
+  ];
+  
+  shellHook = ''
+    export OPENSSL_DIR=${pkgs.openssl.dev}
+    export OPENSSL_LIB_DIR=${pkgs.openssl.out}/lib
+    export OPENSSL_INCLUDE_DIR=${pkgs.openssl.dev}/include
+    export PKG_CONFIG_PATH=${pkgs.openssl.dev}/lib/pkgconfig
+    export LD_LIBRARY_PATH=${pkgs.openssl.out}/lib:$LD_LIBRARY_PATH
+    echo "Rust development environment ready!"
+  '';
+}
+EOF
+      echo "Created shell.nix file for Rust development"
+    fi
+    
+    # Start a new shell with the environment set up
+    echo "Rust development environment loaded. Run 'nix-shell' to activate full environment."
+    exec $SHELL
+  '';
 in
 {
   # Common development tools
@@ -64,7 +110,18 @@ in
     openssl
     openssl.dev  # Development headers
     pkg-config   # For finding libraries
+    
+    # Custom scripts
+    rust-env
   ];
+  
+  # System-wide environment variables
+  environment.variables = {
+    PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+    OPENSSL_DIR = "${pkgs.openssl.dev}";
+    OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
+    OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include";
+  };
   
   # Add a note to the login message
   users.motd = ''
@@ -73,7 +130,8 @@ in
     If this is your first login, run:
     setup-lunarvim
     
-    to install LunarVim.
+    For Rust development with OpenSSL, run:
+    rust-env
   '';
   
   # Enable developer-friendly options

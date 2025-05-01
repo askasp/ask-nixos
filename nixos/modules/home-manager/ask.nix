@@ -146,6 +146,19 @@ in
 
       unbind C-c
 
+      # Enhanced mouse support for SSH sessions
+      set -g mouse on
+      set -g terminal-overrides 'xterm*:smcup@:rmcup@'
+      set -ag terminal-overrides ',*:Ss=\E[%p1%d q:Se=\E[2 q'
+      set -ag terminal-overrides ',*:RGB'
+      
+      # Better scroll experience
+      bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'select-pane -t=; copy-mode -e; send-keys -M'"
+      bind -n WheelDownPane select-pane -t= \; send-keys -M
+      
+      # Increase scrollback buffer size
+      set -g history-limit 50000
+
       # Use xclip for Linux copy
       bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -selection clipboard"
 
