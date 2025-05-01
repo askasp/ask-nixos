@@ -16,7 +16,7 @@
 
   # Define the Anthropic API key secret
   age.secrets.anthropic-api-key = {
-    file = ../secrets/anthropic-api-key.age;
+    file = /etc/nixos/secrets/anthropic-api-key.age;
     owner = "ask";
     group = "users";
     mode = "0400";
