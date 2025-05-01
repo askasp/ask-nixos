@@ -17,6 +17,7 @@
     ./modules/caddy.nix
     ./modules/user-management.nix
     ./modules/services.nix
+    ./modules/databases.nix
     # Add other modules as needed
   ];
 

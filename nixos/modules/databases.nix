@@ -1,0 +1,55 @@
+{ config, lib, pkgs, ... }:
+
+{
+  # Database services module - MongoDB and PostgreSQL
+
+  # Enable MongoDB service
+  services.mongodb = {
+    enable = true;
+    package = pkgs.mongodb;
+    bind_ip = "127.0.0.1";
+    port = 27017;
+  };
+
+  # Enable PostgreSQL service
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_14;
+    enableTCPIP = true;
+    authentication = pkgs.lib.mkOverride 10 ''
+      local all all trust
+      host all all 127.0.0.1/32 trust
+      host all all ::1/128 trust
+    '';
+    initialScript = pkgs.writeText "postgres-init.sql" ''
+      CREATE ROLE postgres WITH LOGIN PASSWORD 'postgres' CREATEDB;
+      CREATE DATABASE postgres WITH OWNER postgres;
+      
+      -- Create a role for application use
+      CREATE ROLE appuser WITH LOGIN PASSWORD 'appuser' CREATEDB;
+      CREATE DATABASE appdb WITH OWNER appuser;
+    '';
+  };
+
+  # Create data directories with proper permissions
+  system.activationScripts.dbData = ''
+    mkdir -p /var/lib/services/data/mongodb
+    mkdir -p /var/lib/services/data/postgresql
+    
+    # Set correct ownership
+    if id mongodb &>/dev/null; then
+      chown -R mongodb:mongodb /var/lib/services/data/mongodb
+    fi
+    
+    if id postgres &>/dev/null; then
+      chown -R postgres:postgres /var/lib/services/data/postgresql
+    fi
+  '';
+
+  # Install database client tools
+  environment.systemPackages = with pkgs; [
+    mongodb-tools  # MongoDB client tools (mongosh, mongodump, etc.)
+    pgcli          # Better PostgreSQL CLI client
+    postgresql_14  # PostgreSQL client tools (psql, etc.)
+  ];
+} 
