@@ -18,11 +18,23 @@
     ./modules/user-management.nix
     ./modules/services.nix
     ./modules/databases.nix
+    ./modules/amino-api.nix
+    # Uncomment this when you're ready to use agenix for secrets
+    # ./modules/agenix-amino-api.nix
     # Add other modules as needed
   ];
 
   # Set your hostname
   networking.hostName = "cirrus";
+
+  # Enable Amino API service
+  services.amino-api = {
+    enable = true;
+    package = pkgs.amino-api;
+    port = 5150;
+    # We'll add the environment file with agenix later
+    # environmentFile = config.age.secrets.amino-api-env.path;
+  };
 
   # Use the systemd-boot EFI boot loader
   boot.loader.systemd-boot.enable = true;

@@ -10,9 +10,17 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Add the Amino API repo as an input
+    amino-api = {
+      url = "github:AminoNordics/amino_api";
+      # Note: You'll need to make this accessible or use SSH keys
+      # For private repos, consider using:
+      # url = "git+ssh://git@github.com/AminoNordics/amino_api.git";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, home-manager, agenix, ... }@inputs:
+  outputs = { self, nixpkgs, flake-utils, home-manager, agenix, amino-api, ... }@inputs:
     flake-utils.lib.eachDefaultSystem (localSystem: 
       let
         system = "x86_64-linux"; # Target system for NixOS
@@ -46,6 +54,13 @@
                home-manager.useUserPackages = true;
             }
           ];
+        };
+      };
+
+      # Overlay with custom packages
+      overlays.default = final: prev: {
+        amino-api = final.callPackage ./nixos/pkgs/amino-api.nix {
+          src = amino-api;
         };
       };
 
