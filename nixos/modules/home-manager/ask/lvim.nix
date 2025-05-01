@@ -49,6 +49,12 @@
     
     -- Set the colorscheme to neobones (Kindle-like light theme)
     lvim.colorscheme = "neobones"
+    -- Other good light theme options you can try:
+    -- lvim.colorscheme = "zenbones" -- another excellent light theme
+    -- lvim.colorscheme = "rosebones" -- light theme with rose tint
+    -- lvim.colorscheme = "github_light" -- GitHub's light theme
+    -- lvim.colorscheme = "catppuccin-latte" -- Light variant of Catppuccin
+    
     vim.wo.relativenumber = true
     
     -- Ensure tree-sitter is enabled and configured
@@ -150,6 +156,15 @@
         "mcchrish/zenbones.nvim",
         dependencies = "rktjmp/lush.nvim",
         priority = 1000, -- Load colorscheme early
+      },
+      {
+        "projekt0n/github-nvim-theme",
+        priority = 1000,
+      },
+      {
+        "catppuccin/nvim",
+        name = "catppuccin",
+        priority = 1000,
       },
       {
         "zbirenbaum/copilot.lua",
