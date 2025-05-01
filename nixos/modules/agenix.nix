@@ -13,6 +13,11 @@
 
   # Configure agenix path - explicitly set to the default
   age.secretsDir = "/run/agenix";
+  
+  # Explicitly set the SSH key to use for decryption - using ask's private key
+  age.identityPaths = [
+    "/home/ask/.ssh/id_ed25519"  # User ask's private key
+  ];
 
   # Define the Anthropic API key secret
   age.secrets.anthropic-api-key = {
