@@ -1,0 +1,20 @@
+name: amino-frontend
+root: ~/git/amino_frontend
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - lvim
+
+  - aider: 
+      panes:
+        - aider --model sonnet --watch-files --no-auto-commit
+  - terminal:
+  - lazygit:
+     panes:
+      - lazygit
+
+  - server:
+      panes:
+        - npx expo start 
