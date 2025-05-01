@@ -12,10 +12,10 @@
     };
     # Add the Amino API repo as an input
     amino-api = {
-      url = "github:AminoNordics/amino_api";
-      # Note: You'll need to make this accessible or use SSH keys
-      # For private repos, consider using:
-      # url = "git+ssh://git@github.com/AminoNordics/amino_api.git";
+      # Option 1: SSH URL (preferred for production)
+      url = "git+ssh://git@github.com/AminoNordics/amino_api.git";
+      # Option 2: Local path (good for development)
+      # url = "path:/home/ask/git/amino_api";
       flake = false;
     };
   };
