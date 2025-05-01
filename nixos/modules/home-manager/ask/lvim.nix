@@ -43,6 +43,11 @@
     -- LunarVim base configuration
     lvim.log.level = "warn"
     lvim.format_on_save.enabled = true
+    
+    -- Set background to light before setting the colorscheme
+    vim.opt.background = "light"
+    
+    -- Set the colorscheme to neobones (Kindle-like light theme)
     lvim.colorscheme = "neobones"
     vim.wo.relativenumber = true
     
