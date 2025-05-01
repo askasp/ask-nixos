@@ -1,14 +1,26 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Updated aider script that reads from the agenix-managed secret
+  # Updated aider script that safely accesses the API key
   aider = pkgs.writeShellScriptBin "aider" ''
-    # Read API key from the agenix-decrypted secret
-    ANTHROPIC_API_KEY=$(cat ${config.age.secrets.anthropic-api-key.path})
-    export ANTHROPIC_API_KEY
+    # Check if the secret file exists and is readable
+    SECRET_PATH="/run/agenix/anthropic-api-key"
     
-    # Run aider with the API key
-    ${pkgs.python3Packages.aider-chat}/bin/aider --model claude-3-sonnet-20240229 "$@"
+    if [ -r "$SECRET_PATH" ]; then
+      # Read API key from the agenix-decrypted secret
+      ANTHROPIC_API_KEY=$(cat "$SECRET_PATH")
+      export ANTHROPIC_API_KEY
+      
+      # Run aider with the API key
+      ${pkgs.python3Packages.aider-chat}/bin/aider --model claude-3-sonnet-20240229 "$@"
+    else
+      echo "Error: Anthropic API key not found at $SECRET_PATH"
+      echo "Please make sure agenix is properly set up and the secret is decrypted."
+      echo ""
+      echo "You can still run aider with a manually provided API key:"
+      echo "ANTHROPIC_API_KEY=your_key_here aider --model claude-3-sonnet-20240229"
+      exit 1
+    fi
   '';
 in
 {

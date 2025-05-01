@@ -2,13 +2,11 @@
 
 {
   imports = [
-    # Hardware detection
-    # Use the correct path to the hardware-configuration.nix
-    # This path depends on where the file was generated during installation
-    # Try one of these:
-    /etc/nixos/hardware-configuration.nix  # Standard location
-    # ./hardware-configuration.nix  # Relative path (commented)
-    # ../hardware-configuration.nix  # One directory up
+    # Try all possible locations for hardware-configuration.nix
+    # Uncomment the one that works for your system
+    ./hardware-configuration.nix
+    # ../hardware-configuration.nix
+    # /etc/nixos/nixos/hardware-configuration.nix
 
     # Import all our modules
     ./modules/common.nix
@@ -21,6 +19,14 @@
     ./modules/services.nix
     # Add other modules as needed
   ];
+
+  # Add a minimal fallback filesystem configuration just in case
+  fileSystems = lib.mkIf (!(config?fileSystems && config.fileSystems?"/")) {
+    "/" = {
+      device = "/dev/disk/by-label/nixos";
+      fsType = "ext4";
+    };
+  };
 
   # Set your hostname
   networking.hostName = "cirrus";

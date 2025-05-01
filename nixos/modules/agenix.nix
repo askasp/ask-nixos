@@ -11,8 +11,8 @@
     inputs.agenix.packages.${pkgs.system}.default
   ];
 
-  # Configure agenix - By default, agenix will look for secrets.nix in the same directory as your flake.nix
-  # age.secretsDir = "/run/agenix"; # The default path where agenix will mount secrets
+  # Configure agenix path - explicitly set to the default
+  age.secretsDir = "/run/agenix";
 
   # Define the Anthropic API key secret
   age.secrets.anthropic-api-key = {
@@ -20,6 +20,8 @@
     owner = "ask";
     group = "users";
     mode = "0400";
+    # This path is what our home-manager script will look for
+    path = "/run/agenix/anthropic-api-key";
   };
 
   # Example of how to use an agenix-managed secret:
