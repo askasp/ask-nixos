@@ -20,7 +20,7 @@ let
     fi
   '';
   
-  # Create a Rust development environment shell script
+  # Create a Rust development environment shell script - simplified version
   rust-env = pkgs.writeShellScriptBin "rust-env" ''
     # Set up environment for Rust development
     export OPENSSL_DIR="${pkgs.openssl.dev}"
@@ -29,9 +29,13 @@ let
     export PKG_CONFIG_PATH="${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.pkg-config}/lib/pkgconfig"
     export LD_LIBRARY_PATH="${pkgs.openssl.out}/lib:$LD_LIBRARY_PATH"
     
-    # Create shell.nix file in the current directory if it doesn't exist
-    if [ ! -f shell.nix ]; then
-      cat > shell.nix << 'EOF'
+    # Execute shell with environment set
+    exec $SHELL
+  '';
+  
+  # Create a simple shell.nix template file
+  rust-shell-template = pkgs.writeShellScriptBin "create-rust-shell" ''
+    cat > shell.nix << EOF
 { pkgs ? import <nixpkgs> {} }:
 
 pkgs.mkShell {
@@ -49,21 +53,16 @@ pkgs.mkShell {
   ];
   
   shellHook = ''
-    export OPENSSL_DIR=''${pkgs.openssl.dev}
-    export OPENSSL_LIB_DIR=''${pkgs.openssl.out}/lib
-    export OPENSSL_INCLUDE_DIR=''${pkgs.openssl.dev}/include
-    export PKG_CONFIG_PATH=''${pkgs.openssl.dev}/lib/pkgconfig
-    export LD_LIBRARY_PATH=''${pkgs.openssl.out}/lib:$LD_LIBRARY_PATH
+    export OPENSSL_DIR=\${pkgs.openssl.dev}
+    export OPENSSL_LIB_DIR=\${pkgs.openssl.out}/lib
+    export OPENSSL_INCLUDE_DIR=\${pkgs.openssl.dev}/include
+    export PKG_CONFIG_PATH=\${pkgs.openssl.dev}/lib/pkgconfig
+    export LD_LIBRARY_PATH=\${pkgs.openssl.out}/lib:\$LD_LIBRARY_PATH
     echo "Rust development environment ready!"
   '';
 }
 EOF
-      echo "Created shell.nix file for Rust development"
-    fi
-    
-    # Start a new shell with the environment set up
-    echo "Rust development environment loaded. Run 'nix-shell' to activate full environment."
-    exec $SHELL
+    echo "Created shell.nix file for Rust development"
   '';
 in
 {
@@ -113,6 +112,7 @@ in
     
     # Custom scripts
     rust-env
+    rust-shell-template
   ];
   
   # System-wide environment variables
@@ -130,8 +130,9 @@ in
     If this is your first login, run:
     setup-lunarvim
     
-    For Rust development with OpenSSL, run:
-    rust-env
+    For Rust development with OpenSSL:
+    1. Use global environment (available now)
+    2. Or run: create-rust-shell && nix-shell
   '';
   
   # Enable developer-friendly options
