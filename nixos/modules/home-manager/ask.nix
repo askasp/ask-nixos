@@ -67,6 +67,7 @@ in
   xdg.configFile = {
     # Add tmuxinator configs from the external files
     "tmuxinator/amino-api.yml".source = ./ask/tmuxinator/amino-api.yml;
+    "tmuxinator/amino-frontend.yml".source = ./ask/tmuxinator/amino-frontend.yml;
     
     # LunarVim config to use system-provided rust-analyzer
     "lvim/config.lua".text = ''
