@@ -1,0 +1,21 @@
+name: amino-api
+root: ~/git/amino_api
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - hx
+
+  - aider: 
+      panes:
+        - aider --model sonnet --api-key anthropic=YOUR_API_KEY_HERE --watch-files --no-auto-commit
+  - terminal:
+  - lazygit:
+     panes:
+      - lazygit
+
+  - server:
+      panes:
+        - cargo loco start
+        - cargo run --bin cqrs_server 

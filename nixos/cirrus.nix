@@ -2,8 +2,13 @@
 
 {
   imports = [
-    # Hardware detection (needs to be generated on the target system)
-    ./hardware-configuration.nix
+    # Hardware detection
+    # Use the correct path to the hardware-configuration.nix
+    # This path depends on where the file was generated during installation
+    # Try one of these:
+    /etc/nixos/hardware-configuration.nix  # Standard location
+    # ./hardware-configuration.nix  # Relative path (commented)
+    # ../hardware-configuration.nix  # One directory up
 
     # Import all our modules
     ./modules/common.nix
@@ -54,6 +59,9 @@
     useGlobalPkgs = true;  # Use the system's packages
     useUserPackages = true;  # Merge into the user profile
     users.ask = import ./modules/home-manager/ask.nix;
+    
+    # Give home-manager access to agenix secrets
+    extraSpecialArgs = { inherit inputs; };
   };
   
   # Make sure neovim is installed at system level since we disabled it in home-manager

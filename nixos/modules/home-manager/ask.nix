@@ -1,8 +1,14 @@
 { config, pkgs, lib, ... }:
 
 let
+  # Updated aider script that reads from the agenix-managed secret
   aider = pkgs.writeShellScriptBin "aider" ''
-    OPENROUTER_API_KEY='' ${pkgs.python3Packages.aider-chat}/bin/aider "$@"
+    # Read API key from the agenix-decrypted secret
+    ANTHROPIC_API_KEY=$(cat ${config.age.secrets.anthropic-api-key.path})
+    export ANTHROPIC_API_KEY
+    
+    # Run aider with the API key
+    ${pkgs.python3Packages.aider-chat}/bin/aider --model claude-3-sonnet-20240229 "$@"
   '';
 in
 {
@@ -44,6 +50,15 @@ in
     # Python packages
     python3Packages.aider-chat
   ];
+  
+  # Use external tmuxinator config files
+  xdg.configFile = {
+    # Add tmuxinator configs from the external files
+    "tmuxinator/amino-api.yml".source = ./ask/tmuxinator/amino-api.yml;
+    
+    # Additional tmuxinator configs can be added here
+    # "tmuxinator/another-project.yml".source = ./ask/tmuxinator/another-project.yml;
+  };
   
   # ZSH configuration (to match system shell)
   programs.zsh = {
@@ -97,31 +112,6 @@ in
     userName = "askasp";
     userEmail = "aksel@stadler.no";
   };
-  
-  # Create tmuxinator config directory
-  xdg.configFile."tmuxinator/amino-api.yml".text = ''
-name: amino-api
-root: ~/git/amino_api
-
-windows:
-  - editor:
-      layout: main-vertical
-      panes:
-        - hx
-
-  - aider: 
-      panes:
-        -  OPENROUTER_API_KEY='' aider --model openrouter/google/gemini-2.5-pro-preview-03-25 --watch-files --no-auto-commit
-  - terminal:
-  - lazygit:
-     panes:
-      - lazygit
-
-  - server:
-      panes:
-        - cargo loco start
-        - cargo run --bin cqrs_server
-  '';
   
   # Terminal multiplexer configuration
   programs.tmux = {
