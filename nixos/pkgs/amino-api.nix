@@ -30,7 +30,13 @@ rustPlatform.buildRustPackage {
   # This helps during initial setup
   # Once you get the proper cargoHash from the error, 
   # comment these two lines and use cargoHash instead
-  cargoLock.lockFile = "${src}/Cargo.lock";
+  cargoLock = {
+    lockFile = "${src}/Cargo.lock";
+    # Handle git dependencies in Cargo.lock
+    outputHashes = {
+      "ask-cqrs-0.1.0" = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Replace with actual hash
+    };
+  };
   fetchCargoDeps = null;
 
   nativeBuildInputs = [
