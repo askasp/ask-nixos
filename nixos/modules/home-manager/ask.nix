@@ -28,8 +28,6 @@
     # Additional user tools
     tmux
     htop
-    bat  # Better cat
-    exa  # Better ls
     fzf  # Fuzzy finder
   ];
   
