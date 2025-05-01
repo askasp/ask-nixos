@@ -1,5 +1,5 @@
 name: amino-frontend
-root: ~/git/amino_frontend
+root: ~/git/amino
 
 windows:
   - editor:
