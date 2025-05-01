@@ -231,6 +231,13 @@ in
     ];
   };
   
+  # Home activation script to ensure all required directories exist
+  home.activation = {
+    createConfigDirs = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD mkdir -p $VERBOSE_ARG $HOME/.config/lvim
+    '';
+  };
+  
   # This makes home-manager create symlinks automatically
   home.stateVersion = "23.11";
   

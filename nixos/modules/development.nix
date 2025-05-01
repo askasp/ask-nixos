@@ -1,8 +1,11 @@
 { config, pkgs, ... }:
 
 let
-  # Create a custom LunarVim package
+  # Create a custom LunarVim package with proper environment setup
   lunarvim = pkgs.writeShellScriptBin "lvim" ''
+    # Set PATH to include all the necessary LSP servers
+    export PATH="${pkgs.rust-analyzer}/bin:$PATH"
+    
     # Launcher script for LunarVim
     exec ${pkgs.neovim}/bin/nvim -u ~/.local/share/lunarvim/lvim/init.lua "$@"
   '';
@@ -14,6 +17,10 @@ let
       echo "Installing LunarVim for user $(whoami)..."
       mkdir -p $HOME/.local/share
       ${pkgs.curl}/bin/curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash -s -- --no-install-dependencies
+      
+      # Create necessary config directories
+      mkdir -p $HOME/.config/lvim
+      
       echo "LunarVim installed successfully!"
     else
       echo "LunarVim is already installed."
@@ -35,6 +42,11 @@ in
     cargo   # Rust package manager
     rustc   # Rust compiler
     rust-analyzer # LSP for Rust
+    
+    # Language servers for code completion and analysis
+    rust-analyzer
+    nodePackages.typescript-language-server
+    nodePackages.vscode-langservers-extracted # HTML, CSS, JSON, ESLint
     
     # Build essentials
     gcc
@@ -78,6 +90,9 @@ in
     
     # Add PROTOC environment variable
     PROTOC = "${pkgs.protobuf}/bin/protoc";
+    
+    # Ensure rust-analyzer is in PATH
+    PATH = ["${pkgs.rust-analyzer}/bin" "$PATH"];
   };
   
   # Add a system-wide shell script to ensure OpenSSL environment is always set
