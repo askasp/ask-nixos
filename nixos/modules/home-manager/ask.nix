@@ -33,6 +33,11 @@ in
   home.username = "ask";
   home.homeDirectory = "/home/ask";
   
+  # Import LunarVim configuration
+  imports = [
+    ./ask/lvim.nix
+  ];
+  
   # Install packages specific to this user
   home.packages = with pkgs; [
     # Development tools
@@ -69,62 +74,7 @@ in
     "tmuxinator/amino-api.yml".source = ./ask/tmuxinator/amino-api.yml;
     "tmuxinator/amino-frontend.yml".source = ./ask/tmuxinator/amino-frontend.yml;
     
-    # LunarVim config to use system-provided rust-analyzer
-    "lvim/config.lua".text = ''
-      -- General LunarVim configuration
-      lvim.log.level = "warn"
-      lvim.format_on_save.enabled = true
-      
-      -- Prevent Mason from installing rust-analyzer
-      lvim.lsp.installer.setup.ensure_installed = {} -- Disable automatic installation
-      
-      -- Skip Mason's rust-analyzer and use system one directly
-      vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
-      
-      -- Add custom commands to run before LunarVim starts
-      lvim.autocommands = {
-        {
-          "VimEnter", -- When Vim starts
-          {
-            pattern = "*",
-            callback = function()
-              -- Create symlink from Mason's rust-analyzer to system one if needed
-              local mason_bin_dir = vim.fn.expand("~/.local/share/lvim/mason/bin")
-              local system_rust_analyzer = vim.fn.expand("${pkgs.rust-analyzer}/bin/rust-analyzer")
-              local mason_rust_analyzer = mason_bin_dir .. "/rust-analyzer"
-              
-              -- Check if system rust-analyzer exists
-              if vim.fn.executable(system_rust_analyzer) == 1 then
-                -- Create mason bin dir if it doesn't exist
-                vim.fn.system("mkdir -p " .. mason_bin_dir)
-                
-                -- Remove existing file/symlink if it exists
-                vim.fn.system("rm -f " .. mason_rust_analyzer)
-                
-                -- Create symlink
-                vim.fn.system("ln -sf " .. system_rust_analyzer .. " " .. mason_rust_analyzer)
-              end
-            end,
-          }
-        }
-      }
-      
-      -- Manual setup of rust-analyzer
-      local system_analyzer_path = "${pkgs.rust-analyzer}/bin/rust-analyzer"
-      
-      require("lvim.lsp.manager").setup("rust_analyzer", {
-        cmd = { system_analyzer_path },
-        settings = {
-          ["rust-analyzer"] = {
-            checkOnSave = {
-              command = "clippy",
-            },
-          },
-        },
-      })
-      
-      -- Add any other custom LunarVim settings here
-    '';
+    # LunarVim config removed and replaced with the imported module
     
     # Additional tmuxinator configs can be added here
     # "tmuxinator/another-project.yml".source = ./ask/tmuxinator/another-project.yml;
