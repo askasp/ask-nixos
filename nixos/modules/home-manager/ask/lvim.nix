@@ -14,30 +14,28 @@
       
       # rust-analyzer configuration
       autocommands = [{
-        "VimEnter", # When Vim starts
-        {
-          pattern = "*";
-          callback = ''
-            function()
-              # Create symlink from Mason's rust-analyzer to system one if needed
-              local mason_bin_dir = vim.fn.expand("~/.local/share/lvim/mason/bin")
-              local system_rust_analyzer = vim.fn.expand("${pkgs.rust-analyzer}/bin/rust-analyzer")
-              local mason_rust_analyzer = mason_bin_dir .. "/rust-analyzer"
+        event = "VimEnter"; # When Vim starts
+        pattern = "*";
+        callback = ''
+          function()
+            # Create symlink from Mason's rust-analyzer to system one if needed
+            local mason_bin_dir = vim.fn.expand("~/.local/share/lvim/mason/bin")
+            local system_rust_analyzer = vim.fn.expand("${pkgs.rust-analyzer}/bin/rust-analyzer")
+            local mason_rust_analyzer = mason_bin_dir .. "/rust-analyzer"
+            
+            # Check if system rust-analyzer exists
+            if vim.fn.executable(system_rust_analyzer) == 1 then
+              # Create mason bin dir if it doesn't exist
+              vim.fn.system("mkdir -p " .. mason_bin_dir)
               
-              # Check if system rust-analyzer exists
-              if vim.fn.executable(system_rust_analyzer) == 1 then
-                # Create mason bin dir if it doesn't exist
-                vim.fn.system("mkdir -p " .. mason_bin_dir)
-                
-                # Remove existing file/symlink if it exists
-                vim.fn.system("rm -f " .. mason_rust_analyzer)
-                
-                # Create symlink
-                vim.fn.system("ln -sf " .. system_rust_analyzer .. " " .. mason_rust_analyzer)
-              end
+              # Remove existing file/symlink if it exists
+              vim.fn.system("rm -f " .. mason_rust_analyzer)
+              
+              # Create symlink
+              vim.fn.system("ln -sf " .. system_rust_analyzer .. " " .. mason_rust_analyzer)
             end
-          '';
-        }
+          end
+        '';
       }];
 
       # Skip Mason's rust-analyzer and use system one directly
