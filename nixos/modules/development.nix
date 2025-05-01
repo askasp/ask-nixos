@@ -42,6 +42,9 @@ in
     cmake
     pkg-config
     
+    # Protocol Buffers
+    protobuf  # Includes protoc compiler
+    
     # Editor dependencies for LunarVim
     neovim
     python3
@@ -72,6 +75,9 @@ in
     OPENSSL_DIR = "${pkgs.openssl.dev}";
     OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
     OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include";
+    
+    # Add PROTOC environment variable
+    PROTOC = "${pkgs.protobuf}/bin/protoc";
   };
   
   # Add a system-wide shell script to ensure OpenSSL environment is always set
@@ -81,6 +87,7 @@ in
       export OPENSSL_DIR="${pkgs.openssl.dev}"
       export OPENSSL_LIB_DIR="${pkgs.openssl.out}/lib"
       export OPENSSL_INCLUDE_DIR="${pkgs.openssl.dev}/include"
+      export PROTOC="${pkgs.protobuf}/bin/protoc"
     '';
     mode = "0644";
   };
@@ -92,7 +99,7 @@ in
     If this is your first login, run:
     setup-lunarvim
     
-    Rust development with OpenSSL is pre-configured.
+    Rust development with OpenSSL and Protocol Buffers is pre-configured.
   '';
   
   # Enable developer-friendly options
