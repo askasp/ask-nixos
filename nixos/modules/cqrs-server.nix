@@ -3,37 +3,37 @@
 with lib;
 
 let
-  cfg = config.services.amino-api;
+  cfg = config.services.cqrs-server;
 in {
-  options.services.amino-api = {
-    enable = mkEnableOption "Amino API service";
+  options.services.cqrs-server = {
+    enable = mkEnableOption "CQRS Server service";
     
     package = mkOption {
       type = types.package;
-      description = "The Amino API package to use";
+      description = "The CQRS Server package to use";
     };
     
     user = mkOption {
       type = types.str;
-      default = "amino-api";
+      default = "cqrs-server";
       description = "User account under which the service runs";
     };
     
     group = mkOption {
       type = types.str;
-      default = "amino-api";
+      default = "cqrs-server";
       description = "Group under which the service runs";
     };
     
     dataDir = mkOption {
       type = types.path;
-      default = "/var/lib/amino-api";
-      description = "Directory to store Amino API data";
+      default = "/var/lib/cqrs-server";
+      description = "Directory to store CQRS Server data";
     };
     
     port = mkOption {
       type = types.port;
-      default = 5150;
+      default = 5151;
       description = "Port to listen on";
     };
     
@@ -50,13 +50,13 @@ in {
       group = cfg.group;
       home = cfg.dataDir;
       createHome = true;
-      description = "Amino API service user";
+      description = "CQRS Server service user";
     };
     
     users.groups.${cfg.group} = {};
     
-    systemd.services.amino-api = {
-      description = "Amino API Service";
+    systemd.services.cqrs-server = {
+      description = "CQRS Server Service";
       wantedBy = ["multi-user.target"];
       after = ["network.target"];
       
@@ -64,7 +64,7 @@ in {
         User = cfg.user;
         Group = cfg.group;
         WorkingDirectory = cfg.dataDir;
-        ExecStart = "${cfg.package}/bin/amino_api-cli";
+        ExecStart = "${cfg.package}/bin/cqrs_server";
         Restart = "on-failure";
         
         # Security hardening

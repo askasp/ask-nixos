@@ -19,6 +19,7 @@
     ./modules/services.nix
     ./modules/databases.nix
     ./modules/amino-api.nix
+    ./modules/cqrs-server.nix
     ./modules/webhook-deploy.nix
     # Uncomment this when you're ready to use agenix for secrets
     # ./modules/agenix-amino-api.nix
