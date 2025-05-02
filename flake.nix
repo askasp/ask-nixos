@@ -12,8 +12,8 @@
     };
     # Reference the Amino API repo as a flake
     amino-api = {
-      # Use GitHub shorthand with SSH for private repository
-      url = "github+ssh:AminoNordics/amino_api";
+      # Use explicit SSH URL for private repository
+      url = "git+ssh://git@github.com/AminoNordics/amino_api.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
