@@ -64,7 +64,7 @@ in {
         User = cfg.user;
         Group = cfg.group;
         WorkingDirectory = cfg.dataDir;
-        ExecStart = "${cfg.package}/bin/amino_api-cli";
+        ExecStart = "${cfg.package}/bin/amino_api-cli start";
         Restart = "on-failure";
         
         # Security hardening
