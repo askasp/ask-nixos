@@ -29,13 +29,29 @@
   # Set your hostname
   networking.hostName = "cirrus";
 
+  # Enable Nix features for using SSH keys with flakes
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    trusted-users = [ "root" "ask" ];
+  };
+
+  # Enable SSH agent to use existing keys
+  programs.ssh.startAgent = true;
+
   # Enable Amino API service
   services.amino-api = {
     enable = true;
-    # No need to specify package since it now has a default from the flake
+    package = inputs.amino-api.packages.${pkgs.system}.amino_api;
     port = 5150;
     # We'll add the environment file with agenix later
     # environmentFile = config.age.secrets.amino-api-env.path;
+  };
+
+  # Enable CQRS Server service
+  services.cqrs-server = {
+    enable = true;
+    package = inputs.amino-api.packages.${pkgs.system}.cqrs_server;
+    port = 5151;
   };
 
   # Enable webhook for continuous deployment

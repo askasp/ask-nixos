@@ -13,9 +13,9 @@
     # Reference the Amino API repo as a flake
     amino-api = {
       # Option 1: SSH URL (preferred for production)
-      # url = "git+ssh://git@github.com/AminoNordics/amino_api.git?ref=main";
+      url = "git+ssh://git@github.com/AminoNordics/amino_api.git?ref=main";
       # Option 2: Local path (good for development)
-      url = "path:/home/ask/git/amino_api";
+      # url = "path:/home/ask/git/amino_api";
       # Now it's a flake
       inputs.nixpkgs.follows = "nixpkgs";
     };
