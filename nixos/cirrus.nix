@@ -31,7 +31,7 @@
   # Enable Amino API service
   services.amino-api = {
     enable = true;
-    package = pkgs.amino-api;
+    # No need to specify package since it now has a default from the flake
     port = 5150;
     # We'll add the environment file with agenix later
     # environmentFile = config.age.secrets.amino-api-env.path;

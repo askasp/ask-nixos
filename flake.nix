@@ -10,13 +10,14 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Add the Amino API repo as an input
+    # Reference the Amino API repo as a flake
     amino-api = {
       # Option 1: SSH URL (preferred for production)
       # url = "git+ssh://git@github.com/AminoNordics/amino_api.git?ref=main";
       # Option 2: Local path (good for development)
       url = "path:/home/ask/git/amino_api";
-      flake = false;
+      # Now it's a flake
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -31,13 +32,6 @@
         formatter = nixpkgs.legacyPackages.${localSystem}.nixpkgs-fmt;
       }
     ) // {
-      # Define the overlay
-      overlays.default = final: prev: {
-        amino-api = final.callPackage ./nixos/pkgs/amino-api.nix {
-          src = amino-api;
-        };
-      };
-
       # NixOS configurations (only for x86_64-linux)
       nixosConfigurations = {
         iso = nixpkgs.lib.nixosSystem {
@@ -53,10 +47,6 @@
           system = "x86_64-linux";
           specialArgs = { inherit inputs; };
           modules = [
-            # Apply the overlay to make amino-api available in pkgs
-            ({ pkgs, ... }: {
-              nixpkgs.overlays = [ self.overlays.default ];
-            })
             ./nixos/cirrus.nix
             home-manager.nixosModules.home-manager
             agenix.nixosModules.default

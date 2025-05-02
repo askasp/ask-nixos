@@ -16,7 +16,7 @@ let
     
     # Rebuild system
     cd /etc/nixos
-    nixos-rebuild switch
+    nixos-rebuild switch --option allow-dirty true
     
     echo "Deployment complete!"
   '';
@@ -44,6 +44,12 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # Ensure the webhook package is available
+    environment.systemPackages = with pkgs; [
+      webhook
+      deployScript
+    ];
+    
     systemd.services.webhook-deploy = {
       description = "Webhook deployment service";
       wantedBy = ["multi-user.target"];
@@ -84,8 +90,5 @@ in {
     
     # Open the webhook port
     networking.firewall.allowedTCPPorts = [ cfg.port ];
-    
-    # Add the webhook tool to system packages
-    environment.systemPackages = [ deployScript ];
   };
 } 

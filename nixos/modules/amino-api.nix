@@ -1,4 +1,4 @@
-{pkgs, config, lib, ...}:
+{pkgs, config, lib, inputs, ...}:
 
 with lib;
 
@@ -10,6 +10,8 @@ in {
     
     package = mkOption {
       type = types.package;
+      # Get the package directly from the flake
+      default = inputs.amino-api.packages.${pkgs.system}.default;
       description = "The Amino API package to use";
     };
     

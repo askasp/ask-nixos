@@ -5,18 +5,29 @@ This document outlines how to deploy the Amino API Rust webserver as a systemd s
 ## Prerequisites
 
 1. NixOS with flakes enabled
-2. Access to the AminoNordics/amino_api private repository
+2. Access to the AminoNordics/amino_api private repository with its flake.nix
 
 ## Step 1: Initial Setup
 
 The Amino API service is defined in the following files:
 
-- `nixos/modules/amino-api.nix` - The main service module
-- `nixos/pkgs/amino-api.nix` - The package definition
+- `nixos/modules/amino-api.nix` - The service module that configures systemd
 - `nixos/modules/agenix-amino-api.nix` - Secret management (using agenix)
 - `nixos/modules/caddy-amino-api.nix` - Caddy reverse proxy configuration
 
-## Step 2: Build and Test the Service
+## Step 2: Clone the Repository
+
+Since we're using a local path reference, clone the amino_api repository:
+
+```bash
+# Make sure the directory exists
+mkdir -p /home/ask/git
+
+# Clone the repository 
+git clone git@github.com:AminoNordics/amino_api.git /home/ask/git/amino_api
+```
+
+## Step 3: Build and Test the Service
 
 1. First, rebuild the system to add the service:
 
@@ -36,7 +47,7 @@ systemctl status amino-api
 journalctl -u amino-api -f
 ```
 
-## Step 3: Setting Up Environment Variables with Agenix
+## Step 4: Setting Up Environment Variables with Agenix
 
 ### First-time setup
 
@@ -74,7 +85,7 @@ imports = [
 sudo nixos-rebuild switch
 ```
 
-## Step 4: Setting Up Caddy Reverse Proxy
+## Step 5: Setting Up Caddy Reverse Proxy
 
 1. Update the domain in `nixos/modules/caddy-amino-api.nix` with your actual domain:
 
@@ -104,29 +115,21 @@ imports = [
 sudo nixos-rebuild switch
 ```
 
-## Step 5: Updating the Service
+## Step 6: Continuous Deployment with Webhooks
 
-When you need to update the Amino API service to a newer version:
+The webhook deployment service will automatically:
+1. Pull the latest changes from your git repository
+2. Rebuild the NixOS system
+3. Restart the amino-api service
 
-1. Update the flake input in `flake.nix`:
+To set up a webhook in GitHub:
 
-```nix
-inputs = {
-  # ... other inputs
-  amino-api = {
-    url = "github:AminoNordics/amino_api/new-tag-or-commit";
-    flake = false;
-  };
-};
-```
-
-2. Update `cargoHash` in `nixos/pkgs/amino-api.nix` if necessary
-
-3. Rebuild the system:
-
-```bash
-sudo nixos-rebuild switch
-```
+1. Go to your repository settings > Webhooks
+2. Add a new webhook:
+   - Payload URL: `http://your-server:9000/hooks/amino-deploy`
+   - Content type: `application/json`
+   - Secret: (The value in your config, defaults to "change-me-in-production")
+   - Events: Just the `push` event
 
 ## Troubleshooting
 
@@ -138,12 +141,17 @@ Check the logs:
 journalctl -u amino-api -e
 ```
 
-### Issues with environment variables
+### Issues with flake inputs
 
-Make sure the environment file is properly encrypted:
+If you're having trouble with the flake, you can try:
 
 ```bash
-ls -la /run/agenix/amino-api-env
+# Update the flake lock file
+cd /etc/nixos
+sudo nix flake update
+
+# Or update just the amino-api input
+sudo nix flake lock --update-input amino-api
 ```
 
 ### Testing the service locally
@@ -151,7 +159,7 @@ ls -la /run/agenix/amino-api-env
 To test the API directly:
 
 ```bash
-curl http://localhost:8000/health
+curl http://localhost:5150/health
 ```
 
 To test through Caddy:
