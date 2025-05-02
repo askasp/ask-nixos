@@ -1,4 +1,4 @@
-{pkgs, config, lib, inputs, ...}:
+{pkgs, config, lib, ...}:
 
 with lib;
 
@@ -10,8 +10,6 @@ in {
     
     package = mkOption {
       type = types.package;
-      # Get the package directly from the flake
-      default = inputs.amino-api.packages.${pkgs.system}.default;
       description = "The Amino API package to use";
     };
     
@@ -35,7 +33,7 @@ in {
     
     port = mkOption {
       type = types.port;
-      default = 8000;
+      default = 5150;
       description = "Port to listen on";
     };
     
