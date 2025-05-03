@@ -22,7 +22,7 @@
     ./modules/cqrs-server.nix
     ./modules/webhook-deploy.nix
     # Uncomment this when you're ready to use agenix for secrets
-    # ./modules/agenix-amino-api.nix
+    ./modules/agenix-amino-api.nix
     # Add other modules as needed
   ];
 
@@ -43,8 +43,6 @@
     enable = true;
     package = inputs.amino-api.packages.${pkgs.system}.amino_api;
     port = 5150;
-    # We'll add the environment file with agenix later
-    # environmentFile = config.age.secrets.amino-api-env.path;
   };
 
   # Enable CQRS Server service

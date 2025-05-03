@@ -14,6 +14,12 @@ in
   # Anthropic API key - can be decrypted by the Cirrus machine
   "secrets/anthropic-api-key.age".publicKeys = [ cirrus ];
   
+  # Amino API environment variables
+  "secrets/amino-api-keys.age".publicKeys = [ cirrus ];
+  
+  # CQRS Server environment variables
+  "secrets/cqrs-server-keys.age".publicKeys = [ cirrus ];
+  
   # Example secrets (uncomment and modify as needed)
   # "secrets/example.age" = [ user1 cirrus ];
   # "secrets/credentials.age" = [ user1 cirrus ];
