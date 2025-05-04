@@ -13,16 +13,4 @@
   services.amino-api = {
     environmentFile = config.age.secrets.amino-api-keys.path;
   };
-  
-  # Similar configuration for CQRS server if needed
-  age.secrets.cqrs-server-keys = {
-    file = ../../secrets/cqrs-server-keys.age;
-    owner = config.services.cqrs-server.user;
-    group = config.services.cqrs-server.group;
-    mode = "0400";
-  };
-  
-  services.cqrs-server = {
-    environmentFile = config.age.secrets.cqrs-server-keys.path;
-  };
 } 
