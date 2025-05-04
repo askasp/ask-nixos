@@ -13,20 +13,12 @@
   # Enable PostgreSQL service
   services.postgresql = {
     enable = true;
-    package = pkgs.postgresql_14;
+    package = pkgs.postgresql_16;
     enableTCPIP = true;
     authentication = pkgs.lib.mkOverride 10 ''
       local all all md5
       host all all 127.0.0.1/32 md5
       host all all ::1/128 md5
-    '';
-    initialScript = pkgs.writeText "postgres-init.sql" ''
-      CREATE ROLE postgres WITH LOGIN PASSWORD 'postgres' CREATEDB;
-      CREATE DATABASE postgres WITH OWNER postgres;
-      
-      -- Create a role for application use
-      CREATE ROLE appuser WITH LOGIN PASSWORD 'appuser' CREATEDB;
-      CREATE DATABASE appdb WITH OWNER appuser;
     '';
   };
 
@@ -51,6 +43,6 @@
     mongosh        # MongoDB shell client
     mongodb        # Full MongoDB package including mongo shell
     pgcli          # Better PostgreSQL CLI client
-    postgresql_14  # PostgreSQL client tools (psql, etc.)
+    postgresql_16  # PostgreSQL client tools (psql, etc.)
   ];
 } 
