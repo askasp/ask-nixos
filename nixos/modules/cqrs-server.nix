@@ -79,8 +79,8 @@ in {
       
       environment = {
         PORT = toString cfg.port;
-        ENV = "dev"
-        MONGODB_NAME ="amino"
+        ENV = "dev";
+        MONGODB_NAME = "amino";
 
 
       };
