@@ -58,7 +58,8 @@ in {
     systemd.services.cqrs-server = {
       description = "CQRS Server Service";
       wantedBy = ["multi-user.target"];
-      after = ["network.target"];
+      after = ["network.target" "postgresql.service" "mongodb.service"];
+      requires = ["postgresql.service" "mongodb.service"];
       
       serviceConfig = {
         User = cfg.user;
