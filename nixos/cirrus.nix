@@ -82,6 +82,7 @@
     port = 9000;
     # Generate a secure token for production
     secretToken = "change-me-in-production";
+    aminoAppRepoPath = "/var/lib/amino-app";
   };
 
   # Use the systemd-boot EFI boot loader
