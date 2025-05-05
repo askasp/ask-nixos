@@ -8,7 +8,7 @@
     enable = lib.mkDefault false;  # Set to false by default, can be overridden in main config
     
     # Use Caddyfile format for easier management
-    configFile = lib.mkDefault null;  # Use the virtualHosts option instead
+    configFile = lib.mkDefault "/var/lib/services/configs/Caddyfile";  # Default path for Caddyfile
     
     # Ensure we enable the admin API
     enableReload = true;
