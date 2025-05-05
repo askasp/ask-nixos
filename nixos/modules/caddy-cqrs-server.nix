@@ -3,11 +3,11 @@
 with lib;
 
 let
-  cfg = config.services.amino-api;
-  apiDomain = "api.amino.stadler.no";
+  cfg = config.services.cqrs-server;
+  apiDomain = "apiv2.amino.stadler.no";
 in {
   config = mkIf (cfg.enable && config.services.caddy.enable) {
-    # Add Caddy virtual host for Amino API
+    # Add Caddy virtual host for CQRS Server
     services.caddy.virtualHosts.${apiDomain} = {
       extraConfig = ''
         # Use ACME staging for testing

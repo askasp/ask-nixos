@@ -5,10 +5,16 @@
   # This module is prepared but not active by default
   
   services.caddy = {
-    enable = lib.mkDefault false;  # Set to false by default
+    enable = lib.mkDefault false;  # Set to false by default, can be overridden in main config
     
     # Use Caddyfile format for easier management
-    configFile = "/var/lib/services/configs/Caddyfile";
+    configFile = lib.mkDefault null;  # Use the virtualHosts option instead
+    
+    # Ensure we enable the admin API
+    enableReload = true;
+    
+    # Make sure Caddy can get certificates
+    email = "aksel@amino.no";  # For Let's Encrypt
     
     # Alternative JSON config approach (more structured but harder to edit)
     # config = {
@@ -44,7 +50,7 @@
   # Add Caddy to trusted users (for binding to privileged ports)
   security.acme = {
     acceptTerms = true;
-    defaults.email = "your-email@example.com";  # Required for Let's Encrypt
+    defaults.email = "aksel@amino.no";  # Required for Let's Encrypt
   };
   
   # Set up default Caddyfile location with appropriate permissions
@@ -69,7 +75,13 @@ EOF
     fi
   '';
   
-  # Instructions for setup
+  # Create log directory for Caddy
+  system.activationScripts.caddyLogDir = ''
+    mkdir -p /var/log/caddy
+    chown caddy:caddy /var/log/caddy
+    chmod 755 /var/log/caddy
+  '';
+  
   # Add script to help with Caddy management
   environment.systemPackages = with pkgs; [
     (writeShellScriptBin "caddy-reload" ''
@@ -79,7 +91,12 @@ EOF
     
     (writeShellScriptBin "caddy-validate" ''
       #!/bin/sh
-      ${pkgs.caddy}/bin/caddy validate --config /var/lib/services/configs/Caddyfile
+      ${pkgs.caddy}/bin/caddy validate
+    '')
+    
+    (writeShellScriptBin "caddy-logs" ''
+      #!/bin/sh
+      sudo journalctl -u caddy -f
     '')
   ];
   

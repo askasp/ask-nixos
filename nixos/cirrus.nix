@@ -15,15 +15,18 @@
     ./modules/ssh.nix
     ./modules/agenix.nix
     ./modules/caddy.nix
+
     ./modules/user-management.nix
     ./modules/services.nix
     ./modules/databases.nix
     ./modules/amino-api.nix
+    ./modules/agenix-amino-api.nix
+    ./modules/caddy-amino-api.nix
     ./modules/cqrs-server.nix
+    ./modules/agenix-cqrs-server.nix
+    ./modules/caddy-cqrs-server.nix
     ./modules/webhook-deploy.nix
     # Uncomment this when you're ready to use agenix for secrets
-    ./modules/agenix-amino-api.nix
-    ./modules/agenix-cqrs-server.nix
     # Add other modules as needed
   ];
 
@@ -39,6 +42,15 @@
   # Enable SSH agent to use existing keys
   programs.ssh.startAgent = true;
 
+  # Enable Caddy service
+  services.caddy.enable = true;
+  
+  # Update ACME configuration for Caddy
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "ask@amino.no";  # Update with your email
+  };
+
   # Enable Amino API service
   services.amino-api = {
     enable = true;
@@ -52,7 +64,7 @@
     package = inputs.amino-api.packages.${pkgs.system}.cqrs_server;
     port = 5151;
   };
-
+  
   # Enable webhook for continuous deployment
   services.webhook-deploy = {
     enable = true;
