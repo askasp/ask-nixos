@@ -18,7 +18,7 @@
     };
     amino-app = {
       url = "git+ssh://git@github.com/AminoNordics/amino.git?ref=refs/heads/main";
-      flake = false
+      flake = false;
     };
 
   };

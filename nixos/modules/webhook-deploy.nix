@@ -10,6 +10,8 @@ let
     
     # Default branch
     BRANCH="''${1:-main}"
+    # Service to redeploy, empty means rebuild entire system
+    SERVICE="''${2:-}"
     
     echo "Received webhook, updating services using branch: $BRANCH..."
     
@@ -25,9 +27,40 @@ let
       echo "Warning: Amino app repository not found at ${cfg.aminoAppRepoPath}"
     fi
     
-    # Rebuild system using flakes
-    cd /etc/nixos
-    nixos-rebuild switch --flake .${cfg.flakeTarget} ${optionalString cfg.allowDirty "--option allow-dirty true"}
+    # Handle specific service redeployment
+    if [ ! -z "$SERVICE" ]; then
+      echo "Redeploying specific service: $SERVICE"
+      
+      case "$SERVICE" in
+        "amino-app")
+          echo "Redeploying amino-app frontend..."
+          cd /etc/nixos
+          nixos-rebuild switch --flake .${cfg.flakeTarget} ${optionalString cfg.allowDirty "--option allow-dirty true"}
+          ;;
+        "amino-api")
+          echo "Redeploying amino-api service..."
+          systemctl restart amino-api
+          ;;
+        "cqrs-server")
+          echo "Redeploying cqrs-server service..."
+          systemctl restart cqrs-server
+          ;;
+        "caddy")
+          echo "Reloading Caddy configuration..."
+          systemctl reload caddy
+          ;;
+        *)
+          echo "Unknown service: $SERVICE, falling back to full system rebuild"
+          cd /etc/nixos
+          nixos-rebuild switch --flake .${cfg.flakeTarget} ${optionalString cfg.allowDirty "--option allow-dirty true"}
+          ;;
+      esac
+    else
+      # Rebuild entire system using flakes
+      echo "Rebuilding entire system..."
+      cd /etc/nixos
+      nixos-rebuild switch --flake .${cfg.flakeTarget} ${optionalString cfg.allowDirty "--option allow-dirty true"}
+    fi
     
     echo "Deployment complete!"
   '';
@@ -106,6 +139,10 @@ in {
                   source = "payload";
                   name = "branch";
                   default = "main";
+                },
+                {
+                  source = "payload";
+                  name = "service";
                 }
               ];
               command-working-directory = "/tmp";
