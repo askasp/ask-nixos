@@ -16,6 +16,11 @@
       url = "git+ssh://git@github.com/AminoNordics/amino_api.git?ref=refs/heads/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    amino-app = {
+      url = "git+ssh://git@github.com/AminoNordics/amino.git?ref=refs/heads/main";
+      flake = false
+    };
+
   };
 
   outputs = { self, nixpkgs, flake-utils, home-manager, agenix, amino-api, ... }@inputs:

@@ -26,6 +26,10 @@
     ./modules/agenix-cqrs-server.nix
     ./modules/caddy-cqrs-server.nix
     ./modules/webhook-deploy.nix
+    
+    # Amino App frontend modules
+    ./modules/amino_app.nix
+    ./modules/caddy-amino_app.nix
     # Uncomment this when you're ready to use agenix for secrets
     # Add other modules as needed
   ];
@@ -63,6 +67,13 @@
     enable = true;
     package = inputs.amino-api.packages.${pkgs.system}.cqrs_server;
     port = 5151;
+  };
+  
+  # Enable Amino App frontend
+  services.amino_app = {
+    enable = true;
+    package = pkgs.callPackage ../amino_app-package.nix { inherit inputs; };
+    domain = "app.amino.stadler.no";
   };
   
   # Enable webhook for continuous deployment
