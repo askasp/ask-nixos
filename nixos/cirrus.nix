@@ -48,7 +48,7 @@
   # Update ACME configuration for Caddy
   security.acme = {
     acceptTerms = true;
-    defaults.email = "ask@amino.no";  # Update with your email
+    defaults.email = "aksel@amino.no";  # Update with your email
   };
 
   # Enable Amino API service

@@ -7,39 +7,14 @@
   services.caddy = {
     enable = lib.mkDefault false;  # Set to false by default, can be overridden in main config
     
-    # Use Caddyfile format for easier management
-    configFile = lib.mkDefault "/var/lib/services/configs/Caddyfile";  # Default path for Caddyfile
-    
     # Ensure we enable the admin API
     enableReload = true;
     
     # Make sure Caddy can get certificates
     email = "aksel@amino.no";  # For Let's Encrypt
     
-    # Alternative JSON config approach (more structured but harder to edit)
-    # config = {
-    #   apps = {
-    #     http = {
-    #       servers.main = {
-    #         listen = [":80"];
-    #         # HTTPS is handled automatically by Caddy when domains are configured
-    #         
-    #         routes = [
-    #           {
-    #             match = [{
-    #               host = ["example.com"];
-    #             }];
-    #             handle = [{
-    #               handler = "reverse_proxy";
-    #               upstreams = [{ dial = "localhost:8000"; }];
-    #             }];
-    #           }
-    #           # Add more routes as needed
-    #         ];
-    #       };
-    #     };
-    #   };
-    # };
+    # virtualHosts configuration will be added in specific service modules
+    # like caddy-amino-api.nix
   };
 
   # Open firewall ports
@@ -52,28 +27,6 @@
     acceptTerms = true;
     defaults.email = "aksel@amino.no";  # Required for Let's Encrypt
   };
-  
-  # Set up default Caddyfile location with appropriate permissions
-  system.activationScripts.caddyConfig = ''
-    if [ ! -f /var/lib/services/configs/Caddyfile ]; then
-      mkdir -p /var/lib/services/configs
-      cat > /var/lib/services/configs/Caddyfile << 'EOF'
-# Default Caddyfile
-# Uncomment and modify as needed
-
-# example.com {
-#   reverse_proxy localhost:3000
-# }
-
-# another-example.com {
-#   root * /var/www/another-example
-#   file_server
-# }
-EOF
-      chown root:caddy-admin /var/lib/services/configs/Caddyfile
-      chmod 664 /var/lib/services/configs/Caddyfile
-    fi
-  '';
   
   # Create log directory for Caddy
   system.activationScripts.caddyLogDir = ''

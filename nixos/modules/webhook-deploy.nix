@@ -8,27 +8,17 @@ let
     #!/bin/sh
     set -e
     
-    echo "Received webhook, updating Amino API..."
+    echo "Received webhook, updating services..."
     
-    # Update local repo
-    cd ${cfg.repoPath}
-    git pull
-    
-    # Rebuild system
+    # Rebuild system using flakes
     cd /etc/nixos
-    nixos-rebuild switch --option allow-dirty true
+    nixos-rebuild switch --flake .${cfg.flakeTarget} ${optionalString cfg.allowDirty "--option allow-dirty true"}
     
     echo "Deployment complete!"
   '';
 in {
   options.services.webhook-deploy = {
     enable = mkEnableOption "Webhook deployment service";
-    
-    repoPath = mkOption {
-      type = types.path;
-      default = "/home/ask/git/amino_api";
-      description = "Path to the amino-api git repository";
-    };
     
     port = mkOption {
       type = types.port;
@@ -40,6 +30,18 @@ in {
       type = types.str;
       default = "change-me-please";
       description = "Secret token to validate webhooks";
+    };
+    
+    flakeTarget = mkOption {
+      type = types.str;
+      default = "";
+      description = "Flake target to use (e.g., '#hostname' or empty string for default)";
+    };
+    
+    allowDirty = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Whether to allow building with uncommitted changes";
     };
   };
 
