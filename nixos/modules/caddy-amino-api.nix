@@ -10,13 +10,10 @@ in {
     # Add Caddy virtual host for Amino API
     services.caddy.virtualHosts.${apiDomain} = {
       extraConfig = ''
-        # Use ACME staging for testing
+        # Use Let's Encrypt staging for testing
         tls {
-          issuer acme {
-            preferred_chains smallest
-            # Use Let's Encrypt staging for testing
-            ca https://acme-staging-v02.api.letsencrypt.org/directory
-          }
+          # Use Let's Encrypt staging for testing
+          acme_server https://acme-staging-v02.api.letsencrypt.org/directory
         }
         
         reverse_proxy localhost:${toString cfg.port}
