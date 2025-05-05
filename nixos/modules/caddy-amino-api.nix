@@ -9,14 +9,14 @@ in {
   config = mkIf (cfg.enable && config.services.caddy.enable) {
     # Add Caddy virtual host for Amino API
     services.caddy.virtualHosts.${apiDomain} = {
+      # For development/testing, use internal certificates
+      # For production, Caddy will automatically get Let's Encrypt certificates
       extraConfig = ''
-        # Use Let's Encrypt staging for testing
-        tls {
-          # Use Let's Encrypt staging for testing
-          acme_server https://acme-staging-v02.api.letsencrypt.org/directory
-        }
-        
         reverse_proxy localhost:${toString cfg.port}
+        
+        # Enable TLS with internal certs for testing
+        # Comment this line for production to use auto Let's Encrypt
+        tls internal
         
         # Enable CORS headers
         header {
