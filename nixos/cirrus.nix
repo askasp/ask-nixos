@@ -68,7 +68,6 @@
   # Enable webhook for continuous deployment
   services.webhook-deploy = {
     enable = true;
-    repoPath = "/home/ask/git/amino_api";
     port = 9000;
     # Generate a secure token for production
     secretToken = "change-me-in-production";
