@@ -16,7 +16,7 @@ in {
         
         # Enable TLS with internal certs for testing
         # Comment this line for production to use auto Let's Encrypt
-        tls internal
+        # tls internal
         
         # Enable CORS headers
         header {
