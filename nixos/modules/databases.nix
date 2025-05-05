@@ -10,56 +10,18 @@
     bind_ip = "127.0.0.1";
   };
 
-  # Enable PostgreSQL service
+  # Enable PostgreSQL service with consistent version
   services.postgresql = {
     enable = true;
-    package = pkgs.postgresql_14;
+    package = pkgs.postgresql_16;  # Updated to match client tools
     enableTCPIP = true;
     authentication = pkgs.lib.mkOverride 10 ''
       local all all md5
       host all all 127.0.0.1/32 md5
       host all all ::1/128 md5
-    '';
-    initialScript = pkgs.writeText "postgres-init.sql" ''
-      CREATE ROLE postgres WITH LOGIN PASSWORD 'postgres' CREATEDB;
-      CREATE DATABASE postgres WITH OWNER postgres;
-      
-      -- Create a role for amino use
-      CREATE ROLE amino WITH LOGIN PASSWORD 'your_amino_password' CREATEDB;
-      CREATE DATABASE amino_dev WITH OWNER amino;
-    '';
-    
-    # Add these timeout settings to fix the issue
-    settings = {
-      # Increase timeout for postmaster startup
-      "max_connections" = 100;
-      "shared_buffers" = "128MB";
-    };
+    ''; 
   };
 
-  # Override systemd service settings to increase timeouts
-  systemd.services.postgresql = {
-    serviceConfig = {
-      # Increase timeout for the service
-      TimeoutStartSec = "5min";
-      TimeoutStopSec = "5min";
-    };
-  };
-
-  # Create data directories with proper permissions
-  system.activationScripts.dbData = ''
-    mkdir -p /var/lib/services/data/mongodb
-    mkdir -p /var/lib/services/data/postgresql
-    
-    # Set correct ownership
-    if id mongodb &>/dev/null; then
-      chown -R mongodb:mongodb /var/lib/services/data/mongodb
-    fi
-    
-    if id postgres &>/dev/null; then
-      chown -R postgres:postgres /var/lib/services/data/postgresql
-    fi
-  '';
 
   # Install database client tools
   environment.systemPackages = with pkgs; [
@@ -67,6 +29,6 @@
     mongosh        # MongoDB shell client
     mongodb        # Full MongoDB package including mongo shell
     pgcli          # Better PostgreSQL CLI client
-    postgresql_16  # PostgreSQL client tools (psql, etc.)
+    postgresql_16  # Matching the server version
   ];
 } 
