@@ -45,7 +45,7 @@
   # Firewall configuration - only allow specified ports
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 22 80 443 ];
+    allowedTCPPorts = [ 22 80 443 2022 ];
     # Using alternative for default policy
     extraCommands = ''
       # Drop all incoming connections by default (except allowed ones)
