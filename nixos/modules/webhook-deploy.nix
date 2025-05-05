@@ -179,11 +179,11 @@ in {
                   source = "payload";
                   name = "branch";
                   default = "main";
-                },
+                }
                 {
                   source = "payload";
                   name = "service";
-                },
+                }
                 {
                   source = "payload";
                   name = "api_branch";
