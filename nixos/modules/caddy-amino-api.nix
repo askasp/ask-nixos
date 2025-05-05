@@ -13,6 +13,8 @@ in {
         # Use ACME staging for testing
         tls {
           issuer acme {
+            preferred_chains smallest
+            # Use Let's Encrypt staging for testing
             ca https://acme-staging-v02.api.letsencrypt.org/directory
           }
         }
