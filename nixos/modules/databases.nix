@@ -15,6 +15,8 @@
     enable = true;
     package = pkgs.postgresql_16;  # Updated to match client tools
     enableTCPIP = true;
+    dataDir = "/var/lib/postgresql/16";
+
     authentication = pkgs.lib.mkOverride 10 ''
       local all all md5
       host all all 127.0.0.1/32 md5
