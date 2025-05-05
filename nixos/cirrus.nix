@@ -83,6 +83,8 @@
     # Generate a secure token for production
     secretToken = "change-me-in-production";
     aminoAppRepoPath = "/var/lib/amino-app";
+    # Whether to restore flake.nix to main branch after deployment
+    restoreFlakeAfterDeploy = true;
   };
 
   # Use the systemd-boot EFI boot loader

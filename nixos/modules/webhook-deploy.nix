@@ -12,6 +12,8 @@ let
     BRANCH="''${1:-main}"
     # Service to redeploy, empty means rebuild entire system
     SERVICE="''${2:-}"
+    # Branch for amino-api if needed
+    API_BRANCH="''${3:-main}"
     
     echo "Received webhook, updating services using branch: $BRANCH..."
     
@@ -27,6 +29,21 @@ let
       echo "Warning: Amino app repository not found at ${cfg.aminoAppRepoPath}"
     fi
     
+    # Update flake.nix if a different branch is specified for amino-api
+    if [ "$API_BRANCH" != "main" ] && [ -f "/etc/nixos/flake.nix" ]; then
+      echo "Updating amino-api branch in flake.nix to: $API_BRANCH"
+      cd /etc/nixos
+      
+      # Backup the current flake.nix
+      cp flake.nix flake.nix.backup
+      
+      # Use sed to replace the branch in the amino-api input
+      # This pattern looks for the amino-api url line and replaces main with the specified branch
+      sed -i "s|url = \"git+ssh://git@github.com/AminoNordics/amino_api.git?ref=refs/heads/main\"|url = \"git+ssh://git@github.com/AminoNordics/amino_api.git?ref=refs/heads/$API_BRANCH\"|g" flake.nix
+      
+      echo "Updated flake.nix to use amino-api branch: $API_BRANCH"
+    fi
+    
     # Handle specific service redeployment
     if [ ! -z "$SERVICE" ]; then
       echo "Redeploying specific service: $SERVICE"
@@ -38,12 +55,19 @@ let
           nixos-rebuild switch --flake .${cfg.flakeTarget} ${optionalString cfg.allowDirty "--option allow-dirty true"}
           ;;
         "amino-api")
-          echo "Redeploying amino-api service..."
-          systemctl restart amino-api
+          echo "Redeploying amino-api service with branch: $API_BRANCH..."
+          cd /etc/nixos
+          nixos-rebuild switch --flake .${cfg.flakeTarget} ${optionalString cfg.allowDirty "--option allow-dirty true"}
           ;;
         "cqrs-server")
           echo "Redeploying cqrs-server service..."
-          systemctl restart cqrs-server
+          # CQRS server also needs a full rebuild if the branch changed
+          if [ "$API_BRANCH" != "main" ]; then
+            cd /etc/nixos
+            nixos-rebuild switch --flake .${cfg.flakeTarget} ${optionalString cfg.allowDirty "--option allow-dirty true"}
+          else
+            systemctl restart cqrs-server
+          fi
           ;;
         "caddy")
           echo "Reloading Caddy configuration..."
@@ -60,6 +84,16 @@ let
       echo "Rebuilding entire system..."
       cd /etc/nixos
       nixos-rebuild switch --flake .${cfg.flakeTarget} ${optionalString cfg.allowDirty "--option allow-dirty true"}
+    fi
+    
+    # Restore the original flake.nix if we modified it and want to keep main as default
+    if [ "$API_BRANCH" != "main" ] && [ -f "/etc/nixos/flake.nix.backup" ] && [ "${toString cfg.restoreFlakeAfterDeploy}" = "1" ]; then
+      echo "Restoring original flake.nix to use main branch..."
+      cd /etc/nixos
+      mv flake.nix.backup flake.nix
+    else
+      # Clean up the backup if we're keeping the changes
+      rm -f /etc/nixos/flake.nix.backup
     fi
     
     echo "Deployment complete!"
@@ -96,6 +130,12 @@ in {
       type = types.str;
       default = "/var/lib/amino-app";
       description = "Path to the amino-app git repository";
+    };
+
+    restoreFlakeAfterDeploy = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Whether to restore flake.nix to use main branches after deployment";
     };
   };
 
@@ -143,6 +183,11 @@ in {
                 {
                   source = "payload";
                   name = "service";
+                },
+                {
+                  source = "payload";
+                  name = "api_branch";
+                  default = "main";
                 }
               ];
               command-working-directory = "/tmp";
