@@ -40,6 +40,7 @@
 
   # SSH hardening - updated option name
   security.pam.sshAgentAuth.enable = true;
+  services.eternal-terminal.enable = true;
   
   # Firewall configuration - only allow specified ports
   networking.firewall = {
