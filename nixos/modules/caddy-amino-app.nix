@@ -3,10 +3,10 @@
 with lib;
 
 let
-  cfg = config.services.amino_app;
+  cfg = config.services.amino-app;
 in {
   config = mkIf (cfg.enable && config.services.caddy.enable) {
-    # Add Caddy virtual host for the amino_app
+    # Add Caddy virtual host for the amino-app
     services.caddy.virtualHosts.${cfg.domain} = {
       extraConfig = ''
         root * ${cfg.package}

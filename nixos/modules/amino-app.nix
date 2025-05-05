@@ -3,20 +3,20 @@
 with lib;
 
 let
-  cfg = config.services.amino_app;
+  cfg = config.services.amino-app;
 in {
-  options.services.amino_app = {
+  options.services.amino-app = {
     enable = mkEnableOption "Amino App frontend web application";
     
     package = mkOption {
       type = types.package;
-      description = "The amino_app package to serve";
+      description = "The amino-app package to serve";
     };
     
     domain = mkOption {
       type = types.str;
       default = "app.amino.stadler.no";
-      description = "Domain name for the amino_app frontend";
+      description = "Domain name for the amino-app frontend";
     };
   };
 

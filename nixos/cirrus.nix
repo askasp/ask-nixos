@@ -28,8 +28,8 @@
     ./modules/webhook-deploy.nix
     
     # Amino App frontend modules
-    ./modules/amino_app.nix
-    ./modules/caddy-amino_app.nix
+    ./modules/amino-app.nix
+    ./modules/caddy-amino-app.nix
     # Uncomment this when you're ready to use agenix for secrets
     # Add other modules as needed
   ];
@@ -70,9 +70,9 @@
   };
   
   # Enable Amino App frontend
-  services.amino_app = {
+  services.amino-app = {
     enable = true;
-    package = pkgs.callPackage ../amino_app-package.nix { inherit inputs; };
+    package = pkgs.callPackage ./amino-app-package.nix { inherit inputs; };
     domain = "app.amino.stadler.no";
   };
   
