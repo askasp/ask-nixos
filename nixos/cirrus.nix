@@ -23,6 +23,7 @@
     ./modules/webhook-deploy.nix
     # Uncomment this when you're ready to use agenix for secrets
     ./modules/agenix-amino-api.nix
+    ./modules/agenix-cqrs-server.nix
     # Add other modules as needed
   ];
 
