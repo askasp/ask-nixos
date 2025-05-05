@@ -72,7 +72,7 @@
   # Enable Amino App frontend
   services.amino-app = {
     enable = true;
-    package = pkgs.callPackage ./amino-app-package.nix { inherit inputs; };
+    package = pkgs.callPackage ../amino-app-package.nix { inherit inputs; };
     domain = "app.amino.stadler.no";
   };
   
