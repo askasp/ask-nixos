@@ -221,6 +221,28 @@
         icon = " LSP:",
       }
     }
+    vim.keymap.set("n", "]e", function()
+  vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR })
+end, { desc = "Next Error" })
+
+-- Jump to previous error only
+vim.keymap.set("n", "[e", function()
+  vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR })
+end, { desc = "Previous Error" })
+local severity = vim.diagnostic.severity
+
+lvim.builtin.which_key.mappings["l"]["e"] = {
+  function()
+    require("telescope.builtin").diagnostics({ severity = severity.ERROR })
+  end,
+  "Workspace Errors Only"
+}
+vim.o.autoread = true
+vim.cmd([[
+  autocmd FocusGained,BufEnter * checktime
+]])
+
+
   '';
   
   # Install LunarVim during Home Manager activation if not installed already
