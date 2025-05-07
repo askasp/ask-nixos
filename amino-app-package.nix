@@ -16,8 +16,17 @@ pkgs.stdenv.mkDerivation {
     echo "Contents of directory:"
     ls -la
     
-    echo "Installing dependencies..."
-    npm ci
+    echo "Checking for package.json..."
+    if [ -f package.json ]; then
+      echo "package.json found"
+      cat package.json
+    else
+      echo "ERROR: package.json not found!"
+      exit 1
+    fi
+    
+    echo "Installing dependencies with npm install..."
+    npm install
     
     echo "Processing TailwindCSS..."
     npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css
