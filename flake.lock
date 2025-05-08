@@ -23,6 +23,61 @@
         "type": "github"
       }
     },
+    "amino-api": {
+      "inputs": {
+        "crane": "crane",
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1746625368,
+        "narHash": "sha256-MnmErU0V4uVrXTu7EaTzWIj18nyY1Whf9tUnTkc6Au8=",
+        "ref": "refs/heads/main",
+        "rev": "199aba5ef787ddd6a7c2c7016a0609dc5cb43cd7",
+        "revCount": 511,
+        "type": "git",
+        "url": "ssh://git@github.com/AminoNordics/amino_api.git"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/AminoNordics/amino_api.git"
+      }
+    },
+    "amino-app": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1746693147,
+        "narHash": "sha256-g0AltbVPdWkUxOFXwIqK/EZ42DubDXfGTGd+M0NpxDw=",
+        "ref": "refs/heads/main",
+        "rev": "d6c3362315833bc28bc32e6f1ca291a3a43fe902",
+        "revCount": 1617,
+        "type": "git",
+        "url": "ssh://git@github.com/AminoNordics/amino.git"
+      },
+      "original": {
+        "ref": "refs/heads/main",
+        "type": "git",
+        "url": "ssh://git@github.com/AminoNordics/amino.git"
+      }
+    },
+    "crane": {
+      "locked": {
+        "lastModified": 1745454774,
+        "narHash": "sha256-oLvmxOnsEKGtwczxp/CwhrfmQUG2ym24OMWowcoRhH8=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "efd36682371678e2b6da3f108fdb5c613b3ec598",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -48,6 +103,24 @@
     "flake-utils": {
       "inputs": {
         "systems": "systems_2"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_2": {
+      "inputs": {
+        "systems": "systems_3"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -123,7 +196,9 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
-        "flake-utils": "flake-utils",
+        "amino-api": "amino-api",
+        "amino-app": "amino-app",
+        "flake-utils": "flake-utils_2",
         "home-manager": "home-manager_2",
         "nixpkgs": "nixpkgs"
       }
@@ -144,6 +219,21 @@
       }
     },
     "systems_2": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_3": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
