@@ -35,12 +35,12 @@ pkgs.stdenv.mkDerivation {
     
     echo "About to run npm ci..."
     # Use npm ci with increased timeout and network settings
-    timeout 900 npm ci --no-audit --no-fund --prefer-offline 2>&1 | tee npm-ci.log || {
+    timeout 900 npm ci --no-audit --no-fund --prefer-offline --verbose 2>&1 | tee npm-ci.log || {
       echo "npm ci failed or timed out, falling back to npm install..."
       # Clear node_modules if it exists to avoid conflicts
       rm -rf node_modules
       echo "About to run npm install..."
-      timeout 900 npm install --no-audit --no-fund --prefer-offline 2>&1 | tee npm-install.log
+      timeout 900 npm install --no-audit --no-fund --prefer-offline --verbose 2>&1 | tee npm-install.log
     }
     echo "npm install step complete."
     
