@@ -35,6 +35,10 @@ pkgs.stdenv.mkDerivation {
     # Configure npm to use system DNS
     npm config set dns-servers "8.8.8.8,1.1.1.1"
     
+    # Show npm configuration
+    echo "Current npm configuration:"
+    npm config list
+    
     echo "Checking for package.json..."
     if [ -f package.json ]; then
       echo "package.json found"
@@ -46,13 +50,33 @@ pkgs.stdenv.mkDerivation {
     
     echo "About to run npm ci..."
     # Use npm ci with increased timeout and network settings
-    timeout 900 npm ci --no-audit --no-fund --prefer-offline --verbose 2>&1 | tee npm-ci.log || {
-      echo "npm ci failed or timed out, falling back to npm install..."
+    set +e  # Don't exit on error
+    timeout 900 npm ci --no-audit --no-fund --prefer-offline --verbose 2>&1 | tee npm-ci.log
+    npm_ci_status=$?
+    set -e  # Exit on error again
+    
+    if [ $npm_ci_status -ne 0 ]; then
+      echo "npm ci failed with status $npm_ci_status, falling back to npm install..."
+      echo "Contents of npm-ci.log:"
+      cat npm-ci.log
+      
       # Clear node_modules if it exists to avoid conflicts
       rm -rf node_modules
       echo "About to run npm install..."
+      
+      set +e  # Don't exit on error
       timeout 900 npm install --no-audit --no-fund --prefer-offline --verbose 2>&1 | tee npm-install.log
-    }
+      npm_install_status=$?
+      set -e  # Exit on error again
+      
+      if [ $npm_install_status -ne 0 ]; then
+        echo "npm install also failed with status $npm_install_status"
+        echo "Contents of npm-install.log:"
+        cat npm-install.log
+        exit 1
+      fi
+    fi
+    
     echo "npm install step complete."
     
     echo "Processing TailwindCSS..."
