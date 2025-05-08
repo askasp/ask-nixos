@@ -75,6 +75,7 @@ in
     # Add tmuxinator configs from the external files
     "tmuxinator/amino-api.yml".source = ./ask/tmuxinator/amino-api.yml;
     "tmuxinator/amino-frontend.yml".source = ./ask/tmuxinator/amino-frontend.yml;
+    "tmuxinator/ask-nixos.yml".source = ./ask/tmuxinator/ask-nixos.yml;
     
     # LunarVim config removed and replaced with the imported module
     

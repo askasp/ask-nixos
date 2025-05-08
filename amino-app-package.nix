@@ -16,6 +16,12 @@ pkgs.stdenv.mkDerivation {
     echo "Contents of directory:"
     ls -la
     
+    # Configure npm to use a local registry and avoid network issues
+    npm config set registry https://registry.npmjs.org/
+    npm config set fetch-retries 5
+    npm config set fetch-retry-mintimeout 20000
+    npm config set fetch-retry-maxtimeout 120000
+    
     echo "Checking for package.json..."
     if [ -f package.json ]; then
       echo "package.json found"
@@ -25,13 +31,13 @@ pkgs.stdenv.mkDerivation {
       exit 1
     fi
     
-    # Use npm ci instead of npm install for more reliable builds in CI environments
-    echo "Installing dependencies with npm ci (with 10 minute timeout)..."
-    timeout 600 npm ci --no-audit --no-fund || {
+    # Use npm ci with increased timeout and network settings
+    echo "Installing dependencies with npm ci (with 15 minute timeout)..."
+    timeout 900 npm ci --no-audit --no-fund --prefer-offline || {
       echo "npm ci failed or timed out, falling back to npm install..."
       # Clear node_modules if it exists to avoid conflicts
       rm -rf node_modules
-      timeout 600 npm install --no-audit --no-fund
+      timeout 900 npm install --no-audit --no-fund --prefer-offline
     }
     
     echo "Processing TailwindCSS..."

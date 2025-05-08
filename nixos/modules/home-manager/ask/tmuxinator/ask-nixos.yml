@@ -1,0 +1,13 @@
+name: ask-nixos
+root: ~/git/ask-nixos
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - lvim
+
+  - aider: 
+      panes:
+        - aider --model sonnet --watch-files --no-auto-commit
+  - terminal:
