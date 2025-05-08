@@ -41,6 +41,8 @@
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     trusted-users = [ "root" "ask" ];
+    # Allow network access for amino-app build
+    sandbox = false;
   };
 
   # Enable SSH agent to use existing keys
