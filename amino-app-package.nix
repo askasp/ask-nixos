@@ -3,6 +3,7 @@
 pkgs.stdenv.mkDerivation {
   name = "amino-app";
   src = inputs.amino-app; # Using the amino-app input defined in flake.nix
+  sandbox = false; # Allow network access during the build
   
   nativeBuildInputs = with pkgs; [ 
     nodejs
