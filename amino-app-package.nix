@@ -10,6 +10,7 @@ pkgs.stdenv.mkDerivation {
   ];
   
   buildPhase = ''
+    set -x
     # Set up npm to install packages in the build directory
     export HOME=$PWD
     echo "Starting build in $PWD"
@@ -31,14 +32,16 @@ pkgs.stdenv.mkDerivation {
       exit 1
     fi
     
+    echo "About to run npm ci..."
     # Use npm ci with increased timeout and network settings
-    echo "Installing dependencies with npm ci (with 15 minute timeout)..."
-    timeout 900 npm ci --no-audit --no-fund --prefer-offline || {
+    timeout 900 npm ci --no-audit --no-fund --prefer-offline 2>&1 | tee npm-ci.log || {
       echo "npm ci failed or timed out, falling back to npm install..."
       # Clear node_modules if it exists to avoid conflicts
       rm -rf node_modules
-      timeout 900 npm install --no-audit --no-fund --prefer-offline
+      echo "About to run npm install..."
+      timeout 900 npm install --no-audit --no-fund --prefer-offline 2>&1 | tee npm-install.log
     }
+    echo "npm install step complete."
     
     echo "Processing TailwindCSS..."
     timeout 300 npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css || {
