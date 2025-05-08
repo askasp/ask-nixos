@@ -43,6 +43,9 @@
     trusted-users = [ "root" "ask" ];
     # Allow network access for amino-app build
     sandbox = false;
+    # Additional settings for network access
+    allowed-uris = [ "https://registry.npmjs.org/" ];
+    allowed-impure-host-deps = true;
   };
 
   # Enable SSH agent to use existing keys

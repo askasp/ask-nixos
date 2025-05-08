@@ -5,9 +5,6 @@ pkgs.stdenv.mkDerivation {
   src = inputs.amino-app; # Using the amino-app input defined in flake.nix
   sandbox = false; # Allow network access during the build
   
-  # Add DNS configuration
-  __noChroot = true;
-  
   nativeBuildInputs = with pkgs; [ 
     nodejs
     nodePackages.npm
@@ -16,23 +13,13 @@ pkgs.stdenv.mkDerivation {
     iproute2
   ];
   
+  # Add DNS configuration
+  __noChroot = false;  # This is the correct setting
+  
   buildPhase = ''
     set -x
     # Set up npm to install packages in the build directory
     export HOME=$PWD
-    
-    # Configure DNS
-    echo "nameserver 8.8.8.8" > /etc/resolv.conf
-    echo "nameserver 1.1.1.1" >> /etc/resolv.conf
-    
-    # Test DNS resolution
-    echo "Testing DNS resolution..."
-    nslookup registry.npmjs.org 8.8.8.8 || true
-    nslookup registry.npmjs.org 1.1.1.1 || true
-    
-    echo "Starting build in $PWD"
-    echo "Contents of directory:"
-    ls -la
     
     # Configure npm to use a local registry and avoid network issues
     npm config set registry https://registry.npmjs.org/
@@ -44,6 +31,9 @@ pkgs.stdenv.mkDerivation {
     # Add more npm configuration for reliability
     npm config set network-timeout 300000
     npm config set fetch-timeout 300000
+    
+    # Configure npm to use system DNS
+    npm config set dns-servers "8.8.8.8,1.1.1.1"
     
     echo "Checking for package.json..."
     if [ -f package.json ]; then
