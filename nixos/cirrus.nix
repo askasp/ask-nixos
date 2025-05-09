@@ -74,12 +74,12 @@
     port = 5151;
   };
   
-  # Enable Amino App frontend
-  services.amino-app = {
-    enable = true;
-    package = pkgs.callPackage ../amino-app-package.nix { inherit inputs; };
-    domain = "app.amino.stadler.no";
-  };
+  # # Enable Amino App frontend
+  # services.amino-app = {
+  #   enable = true;
+  #   package = pkgs.callPackage ../amino-app-package.nix { inherit inputs; };
+  #   domain = "app.amino.stadler.no";
+  # };
   
   # Enable webhook for continuous deployment
   services.webhook-deploy = {
