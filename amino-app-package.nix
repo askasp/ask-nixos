@@ -29,11 +29,7 @@ pkgs.stdenv.mkDerivation {
     npm config set fetch-retry-factor 2
     
     # Add more npm configuration for reliability
-    npm config set network-timeout 300000
     npm config set fetch-timeout 300000
-    
-    # Configure npm to use system DNS
-    npm config set dns-servers "8.8.8.8,1.1.1.1"
     
     # Show npm configuration
     echo "Current npm configuration:"
