@@ -18,7 +18,8 @@
     };
     amino-app = {
       url = "git+ssh://git@github.com/AminoNordics/amino.git?ref=refs/heads/main";
-      flake = false;
+      # Enable flake support to use the repo's own flake.nix
+      flake = true;
     };
 
   };
@@ -50,11 +51,19 @@
           specialArgs = { inherit inputs; };
           modules = [
             ./nixos/cirrus.nix
+            ./nixos/modules/amino-app.nix
             home-manager.nixosModules.home-manager
             agenix.nixosModules.default
             {
                home-manager.useGlobalPkgs = true;
                home-manager.useUserPackages = true;
+               
+               # Enable the amino-app service
+               services.amino-app = {
+                 enable = true;
+                 # Use the package from the flake
+                 package = inputs.amino-app.packages.x86_64-linux.default;
+               };
             }
           ];
         };
