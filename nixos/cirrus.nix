@@ -28,8 +28,8 @@
     ./modules/webhook-deploy.nix
     
     # Amino App frontend modules
-    # ./modules/amino-app.nix
-    # ./modules/caddy-amino-app.nix
+    ./modules/amino-app.nix
+    ./modules/caddy-amino-app.nix
     # Uncomment this when you're ready to use agenix for secrets
     # Add other modules as needed
   ];
