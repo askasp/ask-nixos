@@ -35,6 +35,7 @@
     owner = "ask";
     group = "users";
     mode = "0400";
+  };
 
   # Example of how to use an agenix-managed secret:
   # age.secrets.example-secret = {
