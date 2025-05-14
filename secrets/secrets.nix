@@ -13,6 +13,8 @@ in
   
   # Anthropic API key - can be decrypted by the Cirrus machine
   "secrets/anthropic-api-key.age".publicKeys = [ cirrus ];
+
+  "secrets/openrouter-api-key.age".publicKeys = [ cirrus ];
   
   # Amino API environment variables
   "secrets/amino-api-keys.age".publicKeys = [ cirrus ];

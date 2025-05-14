@@ -30,6 +30,12 @@
     path = "/run/agenix/anthropic-api-key";
   };
 
+  age.secrets.openrouter-api-key = {
+    file = ../../secrets/openrouter-api-key.age;
+    owner = "ask";
+    group = "users";
+    mode = "0400";
+
   # Example of how to use an agenix-managed secret:
   # age.secrets.example-secret = {
   #   file = ../secrets/example.age;

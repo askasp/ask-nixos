@@ -1,24 +1,24 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Updated aider script that safely accesses the API key
+  # Aider script using OpenRouter to access Anthropic models
   aider = pkgs.writeShellScriptBin "aider" ''
     # Check if the secret file exists and is readable
-    SECRET_PATH="/run/agenix/anthropic-api-key"
+    SECRET_PATH="/run/agenix/openrouter-api-key"
     
     if [ -r "$SECRET_PATH" ]; then
       # Read API key from the agenix-decrypted secret
-      ANTHROPIC_API_KEY=$(cat "$SECRET_PATH")
-      export ANTHROPIC_API_KEY
+      OPENROUTER_API_KEY=$(cat "$SECRET_PATH")
+      export OPENROUTER_API_KEY
       
-      # Run aider with the API key
-      ${pkgs.python3Packages.aider-chat}/bin/aider --model claude-3-sonnet-20240229 "$@"
+      # Run aider with OpenRouter to access Claude
+      ${pkgs.python3Packages.aider-chat}/bin/aider --openai-api-base "https://openrouter.ai/api/v1" --model "anthropic/claude-3-sonnet" "$@"
     else
-      echo "Error: Anthropic API key not found at $SECRET_PATH"
+      echo "Error: OpenRouter API key not found at $SECRET_PATH"
       echo "Please make sure agenix is properly set up and the secret is decrypted."
       echo ""
       echo "You can still run aider with a manually provided API key:"
-      echo "ANTHROPIC_API_KEY=your_key_here aider --model claude-3-sonnet-20240229"
+      echo "OPENROUTER_API_KEY=your_key_here aider --openai-api-base \"https://openrouter.ai/api/v1\" --model \"anthropic/claude-3-sonnet\""
       exit 1
     fi
   '';
