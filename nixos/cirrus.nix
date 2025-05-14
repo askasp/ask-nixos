@@ -19,12 +19,18 @@
     ./modules/user-management.nix
     ./modules/services.nix
     ./modules/databases.nix
+    
+    # Amino API related modules
     ./modules/amino-api.nix
     ./modules/agenix-amino-api.nix
     ./modules/caddy-amino-api.nix
+    
+    # CQRS Server modules
     ./modules/cqrs-server.nix
     ./modules/agenix-cqrs-server.nix
     ./modules/caddy-cqrs-server.nix
+    
+    # Webhook deploy module
     ./modules/webhook-deploy.nix
     
     # Amino App frontend modules
@@ -217,4 +223,22 @@ EOF
   
   # This value determines the NixOS release version and should not be changed
   system.stateVersion = "23.11";
+
+  # Enable required database services
+  services.postgresql = {
+    enable = true;
+    ensureDatabases = [ "amino_api" ];
+    ensureUsers = [
+      {
+        name = "amino_api";
+        ensurePermissions = {
+          "DATABASE amino_api" = "ALL PRIVILEGES";
+        };
+      }
+    ];
+  };
+
+  services.mongodb = {
+    enable = true;
+  };
 } 
