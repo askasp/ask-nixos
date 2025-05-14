@@ -4,13 +4,18 @@ with lib;
 
 let
   cfg = config.services.amino-app;
+  # Override the amino-app package to use Node.js 22
+  aminoAppPackage = inputs.amino-app.packages.${pkgs.system}.default.overrideAttrs (old: {
+    buildInputs = (old.buildInputs or []) ++ [ pkgs.nodejs_22 ];
+    nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ pkgs.nodejs_22 ];
+  });
 in {
   options.services.amino-app = {
     enable = mkEnableOption "Amino App frontend web application";
     
     package = mkOption {
       type = types.package;
-      default = inputs.amino-app.packages.${pkgs.system}.default;
+      default = aminoAppPackage;
       description = "The amino-app package to serve";
     };
     
