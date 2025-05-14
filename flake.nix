@@ -12,13 +12,13 @@
     };
     # Reference the Amino API repo as a flake
     amino-api = {
-      # Use the full reference path
       url = "git+ssh://git@github.com/AminoNordics/amino_api.git?ref=refs/heads/main";
       inputs.nixpkgs.follows = "nixpkgs";
+      flake = true;
     };
     amino-app = {
       url = "git+ssh://git@github.com/AminoNordics/amino.git?ref=refs/heads/main";
-      # Enable flake support to use the repo's own flake.nix
+      inputs.nixpkgs.follows = "nixpkgs";
       flake = true;
     };
 
