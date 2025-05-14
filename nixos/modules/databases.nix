@@ -15,6 +15,10 @@
     initialScript = pkgs.writeText "postgres-init.sql" ''
       CREATE ROLE amino WITH LOGIN PASSWORD 'amino' CREATEDB;
       CREATE DATABASE amino WITH OWNER amino;
+      
+      -- Amino API specific database and user
+      CREATE ROLE amino_api WITH LOGIN PASSWORD 'amino_api' CREATEDB;
+      CREATE DATABASE amino_api WITH OWNER amino_api;
     '';
     # Default settings
     settings = {

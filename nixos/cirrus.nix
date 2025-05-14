@@ -223,22 +223,4 @@ EOF
   
   # This value determines the NixOS release version and should not be changed
   system.stateVersion = "23.11";
-
-  # Enable required database services
-  services.postgresql = {
-    enable = true;
-    ensureDatabases = [ "amino_api" ];
-    ensureUsers = [
-      {
-        name = "amino_api";
-        ensurePermissions = {
-          "DATABASE amino_api" = "ALL PRIVILEGES";
-        };
-      }
-    ];
-  };
-
-  services.mongodb = {
-    enable = true;
-  };
 } 
