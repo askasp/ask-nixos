@@ -54,6 +54,16 @@
     allowed-impure-host-deps = true;
   };
 
+  # Override Node.js version globally to use version 22
+  nixpkgs.overlays = [
+    (self: super: {
+      nodejs = super.nodejs_22;
+      nodePackages = super.nodePackages.override {
+        nodejs = super.nodejs_22;
+      };
+    })
+  ];
+
   # Enable SSH agent to use existing keys
   programs.ssh.startAgent = true;
 
