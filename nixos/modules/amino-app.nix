@@ -15,10 +15,11 @@ let
     # Add environment variables for npm
     NPM_CONFIG_LOGLEVEL = "verbose";
     NPM_CONFIG_PROGRESS = "true";
-    NPM_CONFIG_FETCH_RETRIES = "5";
+    NPM_CONFIG_FETCH_RETRIES = "10";
     NPM_CONFIG_FETCH_RETRY_FACTOR = "2";
-    NPM_CONFIG_FETCH_RETRY_MINTIMEOUT = "10000";
-    NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT = "60000";
+    NPM_CONFIG_FETCH_RETRY_MINTIMEOUT = "30000";
+    NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT = "120000";
+    NPM_CONFIG_FETCH_TIMEOUT = "300000";
     
     buildPhase = ''
       # Create a temporary directory for npm
@@ -26,16 +27,24 @@ let
       export NPM_CONFIG_CACHE=$TMPDIR/.npm
       export NPM_CONFIG_PREFIX=$TMPDIR/.npm
       
-      # Set npm registry to use a specific mirror if needed
-      export NPM_CONFIG_REGISTRY="https://registry.npmjs.org/"
+      # Set npm registry to use a more reliable mirror
+      export NPM_CONFIG_REGISTRY="https://registry.npmmirror.com/"
       
       # Clear npm cache and set timeout
       npm cache clean --force
       npm config set fetch-timeout 300000
+      npm config set fetch-retries 10
+      npm config set fetch-retry-factor 2
+      npm config set fetch-retry-mintimeout 30000
+      npm config set fetch-retry-maxtimeout 120000
+      
+      # Add network debugging
+      echo "Network configuration:"
+      npm config list
       
       echo "Starting npm install..."
       # Run npm install with verbose output and network debugging
-      npm install --verbose --no-audit --no-fund --no-package-lock
+      npm install --verbose --no-audit --no-fund --no-package-lock --prefer-offline
       
       echo "Starting npm build..."
       # Run build with verbose output
