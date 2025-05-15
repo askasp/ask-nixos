@@ -16,8 +16,19 @@ let
     cp node-packages.nix $out
   '';
 
-  # Import the generated node-packages.nix
-  nodeDeps = pkgs.callPackage nodeNix {};
+  # Import the generated node-env.nix
+  nodeEnv = import (pkgs.runCommand "node-env.nix" {} ''
+    ${pkgs.node2nix}/bin/node2nix \
+      --input ${inputs.amino-app}/package.json \
+      --lock ${inputs.amino-app}/package-lock.json \
+      --output node-packages.nix \
+      --composition composition.nix \
+      --node-env node-env.nix
+    cp node-env.nix $out
+  '');
+
+  # Import the generated node-packages.nix with the nodeEnv
+  nodeDeps = pkgs.callPackage nodeNix { inherit nodeEnv; };
 
   # Simple package that builds the React app
   aminoAppPackage = pkgs.stdenv.mkDerivation {
