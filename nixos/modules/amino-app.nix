@@ -4,55 +4,24 @@ with lib;
 
 let
   cfg = config.services.amino-app;
-  # Create a simple package that serves the amino-app directory
-  aminoAppPackage = pkgs.stdenv.mkDerivation {
+  
+  # Create a package using yarn2nix
+  aminoAppPackage = pkgs.yarn2nix.mkYarnPackage {
     name = "amino-app";
     version = "1.0.0";
     src = inputs.amino-app;
-    buildInputs = [ pkgs.nodejs_22 ];
-    nativeBuildInputs = [ pkgs.nodejs_22 ];
     
-    # Add environment variables for npm
-    NPM_CONFIG_LOGLEVEL = "verbose";
-    NPM_CONFIG_PROGRESS = "true";
-    NPM_CONFIG_FETCH_RETRIES = "10";
-    NPM_CONFIG_FETCH_RETRY_FACTOR = "2";
-    NPM_CONFIG_FETCH_RETRY_MINTIMEOUT = "30000";
-    NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT = "120000";
-    NPM_CONFIG_FETCH_TIMEOUT = "300000";
+    # If the package.json is in a subdirectory, specify it
+    # packageJson = ./package.json;
+    # yarnLock = ./yarn.lock;
     
     buildPhase = ''
-      # Create a temporary directory for npm
-      export HOME=$TMPDIR
-      export NPM_CONFIG_CACHE=$TMPDIR/.npm
-      export NPM_CONFIG_PREFIX=$TMPDIR/.npm
-      
-      # Set npm registry to use a more reliable mirror
-      export NPM_CONFIG_REGISTRY="https://registry.npmmirror.com/"
-      
-      # Clear npm cache and set timeout
-      npm cache clean --force
-      npm config set fetch-timeout 300000
-      npm config set fetch-retries 10
-      npm config set fetch-retry-factor 2
-      npm config set fetch-retry-mintimeout 30000
-      npm config set fetch-retry-maxtimeout 120000
-      
-      # Add network debugging
-      echo "Network configuration:"
-      npm config list
-      
-      echo "Starting npm install..."
-      # Run npm install with verbose output and network debugging
-      npm install --verbose --no-audit --no-fund --no-package-lock --prefer-offline
-      
-      echo "Starting npm build..."
-      # Run build with verbose output
-      npm run build --verbose
+      # Build the application
+      yarn build
     '';
     
+    # Copy the built files to the output directory
     installPhase = ''
-      # Copy the built files to the output directory
       mkdir -p $out
       if [ -d "dist" ]; then
         cp -r dist/* $out/
@@ -63,12 +32,6 @@ let
         exit 1
       fi
     '';
-    
-    # Add a timeout to the build
-    buildTimeout = 3600; # 1 hour timeout
-    
-    # Enable network access
-    __noChroot = true;
   };
 in {
   options.services.amino-app = {

@@ -50,7 +50,7 @@
     # Allow network access for amino-app build
     sandbox = false;
     # Additional settings for network access
-    allowed-uris = [ "https://registry.npmjs.org/" ];
+    allowed-uris = [ "https://registry.npmjs.org/" "https://registry.npmmirror.com/" ];
     allowed-impure-host-deps = true;
   };
 
@@ -152,6 +152,9 @@
     neovim
     xclip      # For clipboard support in tmux
     fish       # For tmux integration
+    yarn2nix
+    yarn
+    nodejs_22
   ];
   
   # Set default editor to lvim
