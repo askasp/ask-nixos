@@ -5,38 +5,46 @@ with lib;
 let
   cfg = config.services.amino-app;
   
-  # Import the node2nix generated expressions
-  nodePackages = import ./amino-app/node-composition.nix {
-    inherit pkgs;
-    inherit (pkgs) stdenv fetchurl fetchgit;
-    nodejs = pkgs.nodejs_22;
-  };
-  
-  # Create the package using the generated node2nix expressions
-  aminoAppPackage = nodePackages.package.override {
+  # Generate node-packages.nix using node2nix
+  nodeNix = pkgs.runCommand "node-packages.nix" {} ''
+    ${pkgs.node2nix}/bin/node2nix \
+      --input ${inputs.amino-app}/package.json \
+      --lock ${inputs.amino-app}/package-lock.json \
+      --output node-packages.nix \
+      --composition composition.nix \
+      --node-env node-env.nix
+    cp node-packages.nix $out
+  '';
+
+  # Import the generated node-packages.nix
+  nodeDeps = pkgs.callPackage nodeNix {};
+
+  # Simple package that builds the React app
+  aminoAppPackage = pkgs.stdenv.mkDerivation {
     name = "amino-app";
     version = "1.0.0";
     src = inputs.amino-app;
     
-    # Set environment to production
-    NODE_ENV = "production";
+    buildInputs = with pkgs; [
+      nodejs_22
+      nodePackages.npm
+    ];
     
     buildPhase = ''
-      # Build the application
+      # Ensure home directory exists for npm
+      export HOME=$(mktemp -d)
+      
+      # Use the offline cache from node2nix
+      cp -r ${nodeDeps}/lib/node_modules/* ./node_modules/
+      
+      # Build the app
       npm run build
     '';
     
-    # Copy the built files to the output directory
     installPhase = ''
+      # Copy the build output to the output directory
       mkdir -p $out
-      if [ -d "dist" ]; then
-        cp -r dist/* $out/
-      elif [ -d "build" ]; then
-        cp -r build/* $out/
-      else
-        echo "Error: No dist or build directory found"
-        exit 1
-      fi
+      cp -r dist/* $out/
     '';
   };
 in {
