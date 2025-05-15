@@ -5,36 +5,6 @@ with lib;
 let
   cfg = config.services.amino-app;
   
-  # Generate node2nix files
-  node2nixFiles = pkgs.runCommand "node2nix-files" {} ''
-    ${pkgs.node2nix}/bin/node2nix \
-      --input ${inputs.amino-app}/package.json \
-      --lock ${inputs.amino-app}/package-lock.json \
-      --output default.nix \
-      --composition composition.nix \
-      --node-env node-env.nix
-    
-    mkdir -p $out
-    cp default.nix $out/
-    cp composition.nix $out/
-    cp node-env.nix $out/
-  '';
-
-  # Import the node environment
-  nodeEnv = import "${node2nixFiles}/node-env.nix" {
-    inherit (pkgs) stdenv lib;
-    inherit pkgs;
-    inherit (pkgs) runCommand writeTextFile writeShellScript;
-    nodejs = pkgs.nodejs_22;
-    # python2 = pkgs.python2;
-    libtool = pkgs.libtool;
-  };
-
-  # Get node dependencies
-  nodeDependencies = (pkgs.callPackage "${node2nixFiles}/default.nix" {
-    inherit nodeEnv;
-  }).nodeDependencies;
-
   # Simple package that builds the React app
   aminoAppPackage = pkgs.stdenv.mkDerivation {
     name = "amino-app";
@@ -50,9 +20,8 @@ let
       # Ensure home directory exists for npm
       export HOME=$(mktemp -d)
       
-      # Link node modules and add to PATH
-      ln -s ${nodeDependencies}/lib/node_modules ./node_modules
-      export PATH="${nodeDependencies}/bin:$PATH"
+      # Install dependencies
+      npm install
       
       # Build the app
       npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css
