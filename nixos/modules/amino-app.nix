@@ -27,8 +27,19 @@ let
     cp node-env.nix $out
   '');
 
-  # Import the generated node-packages.nix with the nodeEnv
-  nodeDeps = pkgs.callPackage nodeNix { inherit nodeEnv; };
+  # Import the generated composition.nix
+  composition = import (pkgs.runCommand "composition.nix" {} ''
+    ${pkgs.node2nix}/bin/node2nix \
+      --input ${inputs.amino-app}/package.json \
+      --lock ${inputs.amino-app}/package-lock.json \
+      --output node-packages.nix \
+      --composition composition.nix \
+      --node-env node-env.nix
+    cp composition.nix $out
+  '');
+
+  # Get the package from the composition
+  nodeDeps = (composition { inherit pkgs nodeEnv; }).package;
 
   # Simple package that builds the React app
   aminoAppPackage = pkgs.stdenv.mkDerivation {
@@ -49,7 +60,11 @@ let
       cp -r ${nodeDeps}/lib/node_modules/* ./node_modules/
       
       # Build the app
-      npm run build
+      npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css
+              
+      # Build the web export
+      npx expo export --platform web
+
     '';
     
     installPhase = ''
