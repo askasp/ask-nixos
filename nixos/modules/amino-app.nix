@@ -12,8 +12,7 @@ let
       --lock ${inputs.amino-app}/package-lock.json \
       --output node-packages.nix \
       --composition composition.nix \
-      --node-env node-env.nix \
-      --nodejs-22
+      --node-env node-env.nix
     
     mkdir -p $out
     cp node-packages.nix $out/
