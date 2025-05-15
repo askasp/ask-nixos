@@ -5,19 +5,21 @@ with lib;
 let
   cfg = config.services.amino-app;
   
-  # Create a package using node2nix
-  aminoAppPackage = pkgs.nodePackages.${pkgs.node2nix.nodeEnv}.buildNodePackage {
+  # Import the node2nix generated expressions
+  nodePackages = import ./amino-app/node-composition.nix {
+    inherit pkgs;
+    inherit (pkgs) stdenv fetchurl fetchgit;
+    nodejs = pkgs.nodejs_22;
+  };
+  
+  # Create the package using the generated node2nix expressions
+  aminoAppPackage = nodePackages.package.override {
     name = "amino-app";
     version = "1.0.0";
     src = inputs.amino-app;
     
-    # If the package.json is in a subdirectory, specify it
-    # packageJson = ./package.json;
-    # packageLockJson = ./package-lock.json;
-    
-    buildInputs = with pkgs; [
-      nodejs_22
-    ];
+    # Set environment to production
+    NODE_ENV = "production";
     
     buildPhase = ''
       # Build the application
