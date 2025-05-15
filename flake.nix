@@ -6,10 +6,15 @@
     flake-utils.url = "github:numtide/flake-utils";
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
+    
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    npmlock2nix = {
+  url = "github:nix-community/npmlock2nix";
+  inputs.nixpkgs.follows = "nixpkgs";
+};
     # Reference the Amino API repo as a flake
     amino-api = {
       url = "git+ssh://git@github.com/AminoNordics/amino_api.git?ref=refs/heads/main";
@@ -24,7 +29,7 @@
 
   };
 
-  outputs = { self, nixpkgs, flake-utils, home-manager, agenix, amino-api, ... }@inputs:
+  outputs = { self, nixpkgs, flake-utils, home-manager, agenix, amino-api, npmlock2nix, ... }@inputs:
     flake-utils.lib.eachDefaultSystem (localSystem: 
       let
         system = "x86_64-linux"; # Target system for NixOS
@@ -51,16 +56,9 @@
           specialArgs = { inherit inputs; };
           modules = [
             ./nixos/cirrus.nix
-            ./nixos/modules/amino-app.nix
+            
             home-manager.nixosModules.home-manager
-            agenix.nixosModules.default
-            {
-               home-manager.useGlobalPkgs = true;
-               home-manager.useUserPackages = true;
-               
-               # Enable the amino-app service
-               services.amino-app.enable = true;
-            }
+            agenix.nixosModules.default 
           ];
         };
       };

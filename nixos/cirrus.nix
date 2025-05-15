@@ -1,4 +1,21 @@
 { config, lib, pkgs, inputs, ... }:
+let
+  nodeApp = inputs.npmlock2nix.lib.${pkgs.system}.build {
+    src = inputs.amino-app;
+    nodejs = pkgs.nodejs_22;
+
+    buildCommands = [
+      "npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css"
+      "npx expo export --platform web"
+      "npm run build"
+    ];
+
+    installPhase = ''
+      mkdir -p $out
+      cp -r dist/* $out/
+    '';
+  };
+in
 
 {
   imports = [
@@ -91,7 +108,10 @@
   };
   
   # Enable the amino-app service (package is defined in the module)
-  services.amino-app.enable = true;
+  services.amino-app = {
+  enable = true;
+  package = nodeApp;
+};
   
   # Enable webhook for continuous deployment
   services.webhook-deploy = {
