@@ -24,7 +24,10 @@ let
   nodeEnv = import "${node2nixFiles}/node-env.nix" {
     inherit (pkgs) stdenv python3 lib;
     inherit pkgs;
+    inherit (pkgs) runCommand writeTextFile writeShellScript;
     nodejs = pkgs.nodejs_22;
+    python2 = pkgs.python2;
+    libtool = pkgs.libtool;
   };
 
   # Get node dependencies
