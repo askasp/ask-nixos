@@ -87,7 +87,7 @@ in {
     # Configure Caddy to serve the Amino app
     services.caddy.virtualHosts.${cfg.domain} = {
       extraConfig = ''
-        root * ${cfg.package}
+        root * ${toString cfg.package}
         file_server
         
         # Enable TLS with automatic certificates
