@@ -14,19 +14,36 @@ let
     buildInputs = with pkgs; [
       nodejs_22
       nodePackages.npm
+      python3  # Some npm packages might need Python
+      gcc      # For native module compilation
     ];
     
     buildPhase = ''
       # Ensure home directory exists for npm
       export HOME=$(mktemp -d)
       
-      # Install dependencies
-      npm install
+      # Configure npm
+      export NPM_CONFIG_CACHE=$HOME/.npm
+      export NPM_CONFIG_PREFIX=$HOME/.npm
+      export PATH="$HOME/.npm/bin:$PATH"
+      
+      # Debug information
+      echo "Node version: $(node --version)"
+      echo "NPM version: $(npm --version)"
+      echo "Current directory: $(pwd)"
+      echo "Listing directory contents:"
+      ls -la
+      
+      # Install dependencies with verbose output
+      echo "Starting npm install..."
+      npm install --verbose
       
       # Build the app
+      echo "Building with tailwindcss..."
       npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css
                
       # Build the web export
+      echo "Building web export..."
       npx expo export --platform web
     '';
     
