@@ -23,8 +23,9 @@ let
   # Import the composition with explicit pkgs
   composition = import "${node2nixFiles}/composition.nix" {
     inherit pkgs;
-    inherit (pkgs) stdenv lib;
+    inherit (pkgs) stdenv;
     nodejs = pkgs.nodejs_22;
+    system = pkgs.system;
   };
 
   # Get the package from the composition
