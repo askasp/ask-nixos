@@ -11,16 +11,50 @@ let
     src = inputs.amino-app;
     buildInputs = [ pkgs.nodejs_22 ];
     nativeBuildInputs = [ pkgs.nodejs_22 ];
+    
+    # Add environment variables for npm
+    NPM_CONFIG_LOGLEVEL = "verbose";
+    NPM_CONFIG_PROGRESS = "true";
+    NPM_CONFIG_FETCH_RETRIES = "5";
+    NPM_CONFIG_FETCH_RETRY_FACTOR = "2";
+    NPM_CONFIG_FETCH_RETRY_MINTIMEOUT = "10000";
+    NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT = "60000";
+    
     buildPhase = ''
-      # Install dependencies and build the app
-      npm install
-      npm run build
+      # Set npm registry to use a specific mirror if needed
+      export NPM_CONFIG_REGISTRY="https://registry.npmjs.org/"
+      
+      # Clear npm cache and set timeout
+      npm cache clean --force
+      npm config set fetch-timeout 300000
+      
+      echo "Starting npm install..."
+      # Run npm install with verbose output and network debugging
+      npm install --verbose --no-audit --no-fund --no-package-lock
+      
+      echo "Starting npm build..."
+      # Run build with verbose output
+      npm run build --verbose
     '';
+    
     installPhase = ''
       # Copy the built files to the output directory
       mkdir -p $out
-      cp -r dist/* $out/
+      if [ -d "dist" ]; then
+        cp -r dist/* $out/
+      elif [ -d "build" ]; then
+        cp -r build/* $out/
+      else
+        echo "Error: No dist or build directory found"
+        exit 1
+      fi
     '';
+    
+    # Add a timeout to the build
+    buildTimeout = 3600; # 1 hour timeout
+    
+    # Enable network access
+    __noChroot = true;
   };
 in {
   options.services.amino-app = {
