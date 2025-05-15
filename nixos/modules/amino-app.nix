@@ -20,18 +20,17 @@ let
     cp node-env.nix $out/
   '';
 
-  # Create a node environment
-  nodeEnv = pkgs.callPackage "${node2nixFiles}/node-env.nix" {
-    inherit (pkgs) stdenv python3 lib;
-    nodejs = pkgs.nodejs_22;
-  };
+  # # Create a node environment
+  # nodeEnv = pkgs.callPackage "${node2nixFiles}/node-env.nix" {
+  #   inherit (pkgs) stdenv python3 lib;
+  #   nodejs = pkgs.nodejs_22;
+  # };
 
   # Import the composition
   composition = import "${node2nixFiles}/composition.nix";
 
   # Get the package from the composition
   nodeDeps = (composition { 
-    inherit pkgs nodeEnv;
     nodejs = pkgs.nodejs_22;
   }).package;
 
