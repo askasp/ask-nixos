@@ -76,9 +76,9 @@ in
   # Override Node.js version globally to use version 22
   nixpkgs.overlays = [
     (self: super: {
-      nodejs = super.nodejs_22;
+      nodejs = super.nodejs-18_x;
       nodePackages = super.nodePackages.override {
-        nodejs = super.nodejs_22;
+        nodejs = super.nodejs-18_x;
       };
     })
   ];
