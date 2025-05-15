@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 with lib;
 
@@ -9,7 +9,7 @@ in {
     # Configure Caddy to serve the Amino app
     services.caddy.virtualHosts.${cfg.domain} = {
       extraConfig = ''
-        root * ${cfg.package}
+        root * ${cfg.rootDir}
         file_server
         
         # Enable TLS with automatic certificates
