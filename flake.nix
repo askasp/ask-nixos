@@ -25,7 +25,7 @@
 
   };
 
-  outputs = { self, nixpkgs, flake-utils, home-manager, agenix, amino-api, npmlock2nix, ... }@inputs:
+  outputs = { self, nixpkgs, flake-utils, home-manager, agenix, amino-api, ... }@inputs:
     flake-utils.lib.eachDefaultSystem (localSystem: 
       let
         system = "x86_64-linux"; # Target system for NixOS
