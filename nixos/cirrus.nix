@@ -155,6 +155,7 @@
     yarn2nix
     yarn
     nodejs_22
+    node2nix
   ];
   
   # Set default editor to lvim

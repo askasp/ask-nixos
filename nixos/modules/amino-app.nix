@@ -5,19 +5,23 @@ with lib;
 let
   cfg = config.services.amino-app;
   
-  # Create a package using yarn2nix
-  aminoAppPackage = pkgs.yarn2nix.mkYarnPackage {
+  # Create a package using node2nix
+  aminoAppPackage = pkgs.nodePackages.${pkgs.node2nix.nodeEnv}.buildNodePackage {
     name = "amino-app";
     version = "1.0.0";
     src = inputs.amino-app;
     
     # If the package.json is in a subdirectory, specify it
     # packageJson = ./package.json;
-    # yarnLock = ./yarn.lock;
+    # packageLockJson = ./package-lock.json;
+    
+    buildInputs = with pkgs; [
+      nodejs_22
+    ];
     
     buildPhase = ''
       # Build the application
-      yarn build
+      npm run build
     '';
     
     # Copy the built files to the output directory
