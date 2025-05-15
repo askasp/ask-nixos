@@ -21,6 +21,11 @@ let
     NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT = "60000";
     
     buildPhase = ''
+      # Create a temporary directory for npm
+      export HOME=$TMPDIR
+      export NPM_CONFIG_CACHE=$TMPDIR/.npm
+      export NPM_CONFIG_PREFIX=$TMPDIR/.npm
+      
       # Set npm registry to use a specific mirror if needed
       export NPM_CONFIG_REGISTRY="https://registry.npmjs.org/"
       
