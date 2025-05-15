@@ -76,6 +76,7 @@ in
     "tmuxinator/amino-api.yml".source = ./ask/tmuxinator/amino-api.yml;
     "tmuxinator/amino-frontend.yml".source = ./ask/tmuxinator/amino-frontend.yml;
     "tmuxinator/ask-nixos.yml".source = ./ask/tmuxinator/ask-nixos.yml;
+    "tmuxinator/nixos.yml".source = ./ask/tmuxinator/nixos.yml;
     
     # LunarVim config removed and replaced with the imported module
     
@@ -168,7 +169,7 @@ in
       bind -T project f run-shell 'tmuxinator start amino-frontend'
       bind -T project p run-shell 'tmuxinator start amino-api'
       bind -T project c run-shell 'tmuxinator start ask-cqrs'
-      bind -T project n run-shell 'tmuxinator start amino_nixos'
+      bind -T project n run-shell 'tmuxinator start nixos'
       bind -T project d run-shell 'tmuxinator start amino_dev'
       bind -T project s run-shell 'tmuxinator start ask-server'
       bind -T project m run-shell 'tmuxinator start mono'
