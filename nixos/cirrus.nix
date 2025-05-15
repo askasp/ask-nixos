@@ -1,22 +1,6 @@
 { config, lib, pkgs, inputs, ... }:
 let
-  nl2nix = import inputs.npmlock2nix { inherit pkgs; };
-
-  nodeApp = nl2nix.v2.build {
-    src = inputs.amino-app;
-    nodejs = pkgs.nodejs-18_x;
-
-    buildCommands = [
-      "npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css"
-      "npx expo export --platform web"
-      "npm run build"
-    ];
-
-    installPhase = ''
-      mkdir -p $out
-      cp -r dist/* $out/
-    '';
-  };
+  # Remove the node build configuration since we'll build manually
 in
 
 {
@@ -66,22 +50,7 @@ in
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     trusted-users = [ "root" "ask" ];
-    # Allow network access for amino-app build
-    sandbox = false;
-    # Additional settings for network access
-    allowed-uris = [ "https://registry.npmjs.org/" "https://registry.npmmirror.com/" ];
-    allowed-impure-host-deps = true;
   };
-
-  # Override Node.js version globally to use version 22
-  nixpkgs.overlays = [
-    (self: super: {
-      nodejs = super.nodejs-18_x;
-      nodePackages = super.nodePackages.override {
-        nodejs = super.nodejs-18_x;
-      };
-    })
-  ];
 
   # Enable SSH agent to use existing keys
   programs.ssh.startAgent = true;
@@ -109,11 +78,11 @@ in
     port = 5151;
   };
   
-  # Enable the amino-app service (package is defined in the module)
+  # Enable the amino-app service with manual build directory
   services.amino-app = {
-  enable = true;
-  package = nodeApp;
-};
+    enable = true;
+    rootDir = "/var/lib/amino-app/dist";
+  };
   
   # Enable webhook for continuous deployment
   services.webhook-deploy = {
@@ -174,10 +143,6 @@ in
     neovim
     xclip      # For clipboard support in tmux
     fish       # For tmux integration
-    yarn2nix
-    yarn
-    nodejs_22
-    node2nix
   ];
   
   # Set default editor to lvim

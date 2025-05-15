@@ -7,16 +7,17 @@ let
 in {
   options.services.amino-app = {
     enable = mkEnableOption "Amino App frontend web application";
-
-    package = mkOption {
-      type = types.package;
-      description = "The amino-app package to serve";
-    };
-
+    
     domain = mkOption {
       type = types.str;
       default = "app.amino.stadler.no";
       description = "Domain name for the amino-app frontend";
+    };
+
+    rootDir = mkOption {
+      type = types.path;
+      default = "/var/lib/amino-app/dist";
+      description = "Directory containing the built amino-app files";
     };
   };
 
@@ -25,11 +26,12 @@ in {
 
     systemd.tmpfiles.rules = [
       "d /var/log/caddy 0755 caddy caddy -"
+      "d ${cfg.rootDir} 0755 caddy caddy -"
     ];
 
     services.caddy.virtualHosts.${cfg.domain} = {
       extraConfig = ''
-        root * ${toString cfg.package}
+        root * ${cfg.rootDir}
         file_server
         tls internal
         header {
@@ -54,6 +56,7 @@ in {
 
     system.activationScripts.amino-app-message = ''
       echo "Amino App is configured at https://${cfg.domain}"
+      echo "Place your built files in ${cfg.rootDir}"
     '';
   };
 }
