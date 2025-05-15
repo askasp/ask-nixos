@@ -23,6 +23,7 @@ let
   # Import the node environment
   nodeEnv = import "${node2nixFiles}/node-env.nix" {
     inherit (pkgs) stdenv python3 lib;
+    inherit pkgs;
     nodejs = pkgs.nodejs_22;
   };
 
