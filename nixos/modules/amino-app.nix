@@ -29,31 +29,6 @@ in {
       "d ${cfg.rootDir} 0755 caddy caddy -"
     ];
 
-    services.caddy.virtualHosts.${cfg.domain} = {
-      extraConfig = ''
-        root * ${cfg.rootDir}
-        file_server
-        tls internal
-        header {
-          Strict-Transport-Security "max-age=31536000; includeSubDomains;"
-          X-XSS-Protection "1; mode=block"
-          X-Content-Type-Options "nosniff"
-          X-Frame-Options "DENY"
-          Cache-Control "public, max-age=3600"
-        }
-        @notFound {
-          not file
-          not path *.js *.css *.png *.jpg *.jpeg *.gif *.svg *.ico *.woff *.woff2
-        }
-        rewrite @notFound /index.html
-        log {
-          output file /var/log/caddy/${cfg.domain}.log
-          format json
-          level INFO
-        }
-      '';
-    };
-
     system.activationScripts.amino-app-message = ''
       echo "Amino App is configured at https://${cfg.domain}"
       echo "Place your built files in ${cfg.rootDir}"
