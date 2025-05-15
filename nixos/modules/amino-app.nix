@@ -25,7 +25,10 @@ let
   composition = import "${node2nixFiles}/composition.nix";
 
   # Get the package from the composition
-  nodeDeps = (composition { inherit pkgs; }).package;
+  nodeDeps = (composition { 
+    inherit pkgs;
+    nodejs = pkgs.nodejs_22;
+  }).package;
 
   # Simple package that builds the React app
   aminoAppPackage = pkgs.stdenv.mkDerivation {
