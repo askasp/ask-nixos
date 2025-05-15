@@ -15,7 +15,7 @@ in {
     
     package = mkOption {
       type = types.package;
-      default = aminoAppPackage;
+      default = mkForce aminoAppPackage;
       description = "The amino-app package to serve";
     };
     
