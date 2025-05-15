@@ -19,7 +19,7 @@
     amino-app = {
       url = "git+ssh://git@github.com/AminoNordics/amino.git?ref=refs/heads/main";
       inputs.nixpkgs.follows = "nixpkgs";
-      flake = true;
+      flake = false;  # Set to false since we're not using its flake outputs
     };
 
   };
