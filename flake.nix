@@ -11,10 +11,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    npmlock2nix = {
-      url = "github:nix-community/npmlock2nix";
-      flake = false;
-    };
     # Reference the Amino API repo as a flake
     amino-api = {
       url = "git+ssh://git@github.com/AminoNordics/amino_api.git?ref=refs/heads/main";
