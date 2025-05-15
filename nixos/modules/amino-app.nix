@@ -12,7 +12,8 @@ let
       --lock ${inputs.amino-app}/package-lock.json \
       --output node-packages.nix \
       --composition composition.nix \
-      --node-env node-env.nix
+      --node-env node-env.nix \
+      --nodejs-22
     
     mkdir -p $out
     cp node-packages.nix $out/
@@ -20,13 +21,18 @@ let
     cp node-env.nix $out/
   '';
 
-  # Import the generated files
-  nodeEnv = import "${node2nixFiles}/node-env.nix";
+  # Create a node environment
+  nodeEnv = pkgs.callPackage "${node2nixFiles}/node-env.nix" {
+    inherit (pkgs) stdenv python3 lib;
+    nodejs = pkgs.nodejs_22;
+  };
+
+  # Import the composition
   composition = import "${node2nixFiles}/composition.nix";
 
   # Get the package from the composition
   nodeDeps = (composition { 
-    inherit pkgs;
+    inherit pkgs nodeEnv;
     nodejs = pkgs.nodejs_22;
   }).package;
 
