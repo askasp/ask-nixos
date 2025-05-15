@@ -4,7 +4,7 @@ let
 
   nodeApp = nl2nix.v2.build {
     src = inputs.amino-app;
-    nodejs = pkgs.nodejs_22;
+    nodejs = pkgs.nodejs-18_x;
 
     buildCommands = [
       "npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css"
