@@ -20,8 +20,16 @@ let
     cp node-env.nix $out/
   '';
 
+  # Import the node environment
+  nodeEnv = import "${node2nixFiles}/node-env.nix" {
+    inherit (pkgs) stdenv python3 lib;
+    nodejs = pkgs.nodejs_22;
+  };
+
   # Get node dependencies
-  nodeDependencies = (pkgs.callPackage "${node2nixFiles}/default.nix" {}).nodeDependencies;
+  nodeDependencies = (pkgs.callPackage "${node2nixFiles}/default.nix" {
+    inherit nodeEnv;
+  }).nodeDependencies;
 
   # Simple package that builds the React app
   aminoAppPackage = pkgs.stdenv.mkDerivation {
