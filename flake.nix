@@ -12,7 +12,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     npmlock2nix = {
-  url = "github:nix-community/npmlock2nix";
+    url = "github:nix-community/npmlock2nix/6be51a7a6b6ea7924a7632cc2ebce2b217f2c6e4";
+
+  inputs.nixpkgs.follows = "nixpkgs";
+};
+    # Reference the Amino API repo as a flake
   inputs.nixpkgs.follows = "nixpkgs";
 };
     # Reference the Amino API repo as a flake
