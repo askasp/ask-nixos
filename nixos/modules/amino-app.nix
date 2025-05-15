@@ -39,7 +39,7 @@ let
   '');
 
   # Get the package from the composition
-  nodeDeps = (composition { inherit pkgs nodeEnv; }).package;
+  nodeDeps = (composition { inherit pkgs; }).package;
 
   # Simple package that builds the React app
   aminoAppPackage = pkgs.stdenv.mkDerivation {
