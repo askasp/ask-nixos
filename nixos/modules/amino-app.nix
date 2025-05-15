@@ -4,45 +4,51 @@ with lib;
 
 let
   cfg = config.services.amino-app;
-  
-  # Simple package that builds the React app
   aminoAppPackage = pkgs.stdenv.mkDerivation {
-    name = "amino-app";
-    version = "1.0.0";
-    src = inputs.amino-app;
-    
-    buildInputs = with pkgs; [
-      nodejs_22
-      python3  # Some npm packages might need Python
-      gcc      # For native module compilation
-    ];
-    
-    buildPhase = ''
-  export HOME=$(mktemp -d)
-  export NPM_CONFIG_CACHE=$HOME/.npm
-  export PATH="$HOME/.npm/bin:$PATH"
-  export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+  name = "amino-app";
+  version = "1.0.0";
+  src = inputs.amino-app; # maybe inputs.amino-app + "/frontend" ?
 
-  echo "Checking for package.json"
-  cat package.json || (echo "Missing package.json" && exit 1)
+  buildInputs = with pkgs; [ nodejs_22 python3 gcc ];
 
-  echo "Installing dependencies"
-  npm ci --verbose --no-audit || (echo "npm install failed" && exit 1)
 
-  echo "Running build script"
-        npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css
-              npx expo export --platform web
+  dontUseBuildDir = true;
 
-  npm run build || (echo "Build failed" && exit 1)
-'';
+  buildPhase = ''
+    set -x
+    echo "=== ENTERED BUILDPHASE ==="
+    echo "Working dir: $(pwd)"
+    echo "Contents:"
+    ls -la
+    echo "package.json?"
+    cat package.json || (echo "NO package.json!!" && exit 1)
 
-      
-    installPhase = ''
-      # Copy the build output to the output directory
-      mkdir -p $out
-      cp -r dist/* $out/
-    '';
+    export HOME=$(mktemp -d)
+    export NPM_CONFIG_CACHE=$HOME/.npm
+    export PATH="$HOME/.npm/bin:$PATH"
+    export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+
+    echo "Installing deps"
+    npm ci --verbose --no-audit || (echo "npm install failed" && exit 1)
+
+    echo "Running tailwind build"
+    npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css
+
+    echo "Running expo export"
+    npx expo export --platform web
+
+    echo "Running npm build"
+    npm run build || (echo "Build failed" && exit 1)
+  '';
+
+  installPhase = ''
+    echo "Copying dist to $out"
+    mkdir -p $out
+    cp -r dist/* $out/
+  '';
   };
+  
+
 in {
   options.services.amino-app = {
     enable = mkEnableOption "Amino App frontend web application";
