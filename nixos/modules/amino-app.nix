@@ -13,48 +13,30 @@ let
     
     buildInputs = with pkgs; [
       nodejs_22
-      nodePackages.npm
       python3  # Some npm packages might need Python
       gcc      # For native module compilation
     ];
     
     buildPhase = ''
-      # Ensure home directory exists for npm
-      export HOME=$(mktemp -d)
+  export HOME=$(mktemp -d)
+  export NPM_CONFIG_CACHE=$HOME/.npm
+  export PATH="$HOME/.npm/bin:$PATH"
+  export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+
+  echo "Checking for package.json"
+  cat package.json || (echo "Missing package.json" && exit 1)
+
+  echo "Installing dependencies"
+  npm ci --verbose --no-audit || (echo "npm install failed" && exit 1)
+
+  echo "Running build script"
+        npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css
+              npx expo export --platform web
+
+  npm run build || (echo "Build failed" && exit 1)
+'';
+
       
-      # Configure npm
-      export NPM_CONFIG_CACHE=$HOME/.npm
-      export NPM_CONFIG_PREFIX=$HOME/.npm
-      export PATH="$HOME/.npm/bin:$PATH"
-      
-      # Network configuration
-      export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
-      export NPM_CONFIG_FETCH_TIMEOUT=300000  # 5 minutes
-      export NPM_CONFIG_FETCH_RETRIES=5
-      export NPM_CONFIG_FETCH_RETRY_FACTOR=2
-      export NPM_CONFIG_FETCH_RETRY_MINTIMEOUT=10000
-      export NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=60000
-      
-      # Debug information
-      echo "Node version: $(node --version)"
-      echo "NPM version: $(npm --version)"
-      echo "Current directory: $(pwd)"
-      echo "Listing directory contents:"
-      ls -la
-      
-      # Install dependencies with verbose output and network debugging
-      echo "Starting npm install..."
-      npm install --verbose --no-audit --no-fund --loglevel verbose
-      
-      # Build the app
-      echo "Building with tailwindcss..."
-      npx tailwindcss -i global.css -o ./node_modules/.cache/nativewind/global.css
-               
-      # Build the web export
-      echo "Building web export..."
-      npx expo export --platform web
-    '';
-    
     installPhase = ''
       # Copy the build output to the output directory
       mkdir -p $out
