@@ -27,6 +27,14 @@ let
       export NPM_CONFIG_PREFIX=$HOME/.npm
       export PATH="$HOME/.npm/bin:$PATH"
       
+      # Network configuration
+      export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+      export NPM_CONFIG_FETCH_TIMEOUT=300000  # 5 minutes
+      export NPM_CONFIG_FETCH_RETRIES=5
+      export NPM_CONFIG_FETCH_RETRY_FACTOR=2
+      export NPM_CONFIG_FETCH_RETRY_MINTIMEOUT=10000
+      export NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=60000
+      
       # Debug information
       echo "Node version: $(node --version)"
       echo "NPM version: $(npm --version)"
@@ -34,9 +42,9 @@ let
       echo "Listing directory contents:"
       ls -la
       
-      # Install dependencies with verbose output
+      # Install dependencies with verbose output and network debugging
       echo "Starting npm install..."
-      npm install --verbose
+      npm install --verbose --no-audit --no-fund --loglevel verbose
       
       # Build the app
       echo "Building with tailwindcss..."
