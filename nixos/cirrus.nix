@@ -2,7 +2,7 @@
 let
   nl2nix = import inputs.npmlock2nix { inherit pkgs; };
 
-  nodeApp = nl2nix.lib.${pkgs.system}.build {
+  nodeApp = nl2nix.v2.build {
     src = inputs.amino-app;
     nodejs = pkgs.nodejs_22;
 
