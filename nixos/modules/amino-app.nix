@@ -5,38 +5,24 @@ with lib;
 let
   cfg = config.services.amino-app;
   
-  # Generate node-packages.nix using node2nix
-  nodeNix = pkgs.runCommand "node-packages.nix" {} ''
+  # Generate all node2nix files in a single runCommand
+  node2nixFiles = pkgs.runCommand "node2nix-files" {} ''
     ${pkgs.node2nix}/bin/node2nix \
       --input ${inputs.amino-app}/package.json \
       --lock ${inputs.amino-app}/package-lock.json \
       --output node-packages.nix \
       --composition composition.nix \
       --node-env node-env.nix
-    cp node-packages.nix $out
+    
+    mkdir -p $out
+    cp node-packages.nix $out/
+    cp composition.nix $out/
+    cp node-env.nix $out/
   '';
 
-  # Import the generated node-env.nix
-  nodeEnv = import (pkgs.runCommand "node-env.nix" {} ''
-    ${pkgs.node2nix}/bin/node2nix \
-      --input ${inputs.amino-app}/package.json \
-      --lock ${inputs.amino-app}/package-lock.json \
-      --output node-packages.nix \
-      --composition composition.nix \
-      --node-env node-env.nix
-    cp node-env.nix $out
-  '');
-
-  # Import the generated composition.nix
-  composition = import (pkgs.runCommand "composition.nix" {} ''
-    ${pkgs.node2nix}/bin/node2nix \
-      --input ${inputs.amino-app}/package.json \
-      --lock ${inputs.amino-app}/package-lock.json \
-      --output node-packages.nix \
-      --composition composition.nix \
-      --node-env node-env.nix
-    cp composition.nix $out
-  '');
+  # Import the generated files
+  nodeEnv = import "${node2nixFiles}/node-env.nix";
+  composition = import "${node2nixFiles}/composition.nix";
 
   # Get the package from the composition
   nodeDeps = (composition { inherit pkgs; }).package;
