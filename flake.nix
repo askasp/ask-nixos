@@ -59,11 +59,7 @@
                home-manager.useUserPackages = true;
                
                # Enable the amino-app service
-               services.amino-app = {
-                 enable = true;
-                 # Use the package from the flake
-                 package = inputs.amino-app.packages.x86_64-linux.default;
-               };
+               services.amino-app.enable = true;
             }
           ];
         };
