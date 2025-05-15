@@ -13,7 +13,8 @@
     };
     npmlock2nix = {
     url = "github:nix-community/npmlock2nix/6be51a7a6b6ea7924a7632cc2ebce2b217f2c6e4";
-    inputs.nixpkgs.follows = "nixpkgs";
+      flake = false;
+
   };
     # Reference the Amino API repo as a flake
     amino-api = {
