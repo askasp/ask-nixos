@@ -12,8 +12,11 @@ in {
         root * ${cfg.rootDir}
         file_server
         
-        # Enable TLS with automatic certificates
-        tls internal # Using internal TLS for testing
+        # Enable automatic HTTPS with Let's Encrypt
+        tls {
+          # Let Caddy handle the certificates automatically
+          protocols tls1.2 tls1.3
+        }
         
         # Security headers
         header {
