@@ -55,7 +55,6 @@
             
             home-manager.nixosModules.home-manager
             agenix.nixosModules.default 
-            amino-app.nixosModules.default  # Add the amino-app module
           ];
         };
       };
