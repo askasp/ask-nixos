@@ -36,9 +36,6 @@ in
     # Webhook deploy module
     ./modules/webhook-deploy.nix
     
-    # Amino App frontend module
-    ./modules/amino-web.nix
-    
     # Uncomment this when you're ready to use agenix for secrets
     # Add other modules as needed
   ];
@@ -78,7 +75,7 @@ in
     port = 5151;
   };
   
-  # Enable the amino-app service with manual build directory
+  # Enable the amino-app service
   services.amino-web = {
     enable = true;
     domain = "app.amino.stadler.no";

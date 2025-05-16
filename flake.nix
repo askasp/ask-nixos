@@ -55,6 +55,7 @@
             
             home-manager.nixosModules.home-manager
             agenix.nixosModules.default 
+            inputs.amino-app.nixosModules.default  # Import the amino-app module
           ];
         };
       };
