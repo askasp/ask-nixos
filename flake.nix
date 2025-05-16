@@ -20,7 +20,7 @@
     amino-app = {
       url = "git+ssh://git@github.com/AminoNordics/amino.git?ref=refs/heads/main";
       inputs.nixpkgs.follows = "nixpkgs";
-      flake = false;  # Set to false since we're not using its flake outputs
+      flake = true;  # Changed to true since we're now using its flake outputs
     };
 
   };
@@ -55,6 +55,7 @@
             
             home-manager.nixosModules.home-manager
             agenix.nixosModules.default 
+            amino-app.nixosModules.default  # Add the amino-app module
           ];
         };
       };

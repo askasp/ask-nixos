@@ -79,9 +79,10 @@ in
   };
   
   # Enable the amino-app service with manual build directory
-  services.amino-app = {
+  services.amino-web = {
     enable = true;
-    rootDir = "/var/lib/amino-app/dist";
+    domain = "app.amino.stadler.no";
+    port = 443;  # Standard HTTPS port
   };
   
   # Enable webhook for continuous deployment
