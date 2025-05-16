@@ -76,7 +76,7 @@ in
   };
   
   # Enable the amino-app service with manual build directory
-  services.amino-web = {
+  services.amino-app = {
     enable = true;
     domain = "app.amino.stadler.no";
     port = 443;  # Standard HTTPS port
