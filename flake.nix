@@ -55,7 +55,7 @@
             
             home-manager.nixosModules.home-manager
             agenix.nixosModules.default 
-            inputs.amino-app.outputs.nixosModules.default  # Use the full path to the module
+            inputs.amino-app.nixosModules.${pkgs.system}.default  # Use the system-specific module
           ];
         };
       };
