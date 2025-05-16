@@ -36,6 +36,9 @@ in
     # Webhook deploy module
     ./modules/webhook-deploy.nix
     
+    # Amino App frontend module
+    ./modules/amino-web.nix
+    
     # Uncomment this when you're ready to use agenix for secrets
     # Add other modules as needed
   ];
