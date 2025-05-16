@@ -79,8 +79,7 @@ in
   services.amino-web = {
     enable = true;
     domain = "app.amino.stadler.no";
-    port = 443;  # Standard HTTPS port
-    package = inputs.amino-app.packages.${pkgs.system}.amino-web;
+    port = 443;
   };
   
   # Enable webhook for continuous deployment
