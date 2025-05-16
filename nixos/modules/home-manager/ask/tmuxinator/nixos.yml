@@ -5,15 +5,5 @@ windows:
   - main:
       layout: even-horizontal
       panes:
-        - vim flake.nix
-        - vim nixos/cirrus.nix
-  - modules:
-      layout: even-horizontal
-      panes:
-        - vim nixos/modules/amino-app.nix
-        - vim nixos/modules/amino-api.nix
-  - services:
-      layout: even-horizontal
-      panes:
-        - vim nixos/modules/caddy-amino-app.nix
-        - vim nixos/modules/caddy-amino-api.nix 
+        - lvim flake.nix
+  - terminal:
